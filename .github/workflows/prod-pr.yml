@@ -1,0 +1,21 @@
+name: prod-pr
+
+on:
+  push:
+    branches: [future]
+
+jobs:
+  create-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Create Pull Request
+        uses: vsoch/pull-request-action@1.0.13
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PASS_IF_EXISTS: true
+          PULL_REQUEST_BODY: Let's synchronize future changes with the main branch
+          PULL_REQUEST_BRANCH: main
+          PULL_REQUEST_DRAFT: true
+          PULL_REQUEST_TITLE: Synchronizing future with main
