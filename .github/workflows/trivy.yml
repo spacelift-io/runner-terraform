@@ -2,9 +2,9 @@ name: Trivy
 
 on:
   push:
-    branches: [main]
+    branches: ["main", "future"]
   pull_request:
-    branches: [main]
+    branches: ["main", "future"]
   schedule:
     - cron: "19 7 * * 0"
 
@@ -30,8 +30,7 @@ jobs:
           output: "trivy-results.sarif"
           severity: "CRITICAL,HIGH"
 
-      # Uncomment once the repo is public.
-      # - name: Upload Trivy scan results to GitHub Security tab
-      #   uses: github/codeql-action/upload-sarif@v1
-      #   with:
-      #     sarif_file: "trivy-results.sarif"
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: "trivy-results.sarif"
