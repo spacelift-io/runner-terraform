@@ -2,9 +2,9 @@ name: Trivy
 
 on:
   push:
-    branches: [main]
+    branches: ["main", "future"]
   pull_request:
-    branches: [main]
+    branches: ["main", "future"]
   schedule:
     - cron: "19 7 * * 0"
 
