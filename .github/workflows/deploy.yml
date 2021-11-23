@@ -12,6 +12,13 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@master
 
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-region: us-east-1
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
       - name: Install the latest AWS CLI
         run: |
           apk add --no-cache python3 py3-pip
@@ -24,5 +31,5 @@ jobs:
       - name: Build and push the image
         uses: docker/build-push-action@v2
         with:
-          push: false # Start pushing from `main` once the creds are available.
-          tags: public.ecr.aws/spacelift/runner-terraform:latest
+          push: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/future' }}
+          tags: ${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:${{ github.ref == 'refs/heads/main' && 'latest' || 'future' }}
