@@ -1,7 +1,7 @@
 FROM alpine:3.14.0
 
 # 3rd party soft dependency versions
-ARG INFRACOST_VERSION=0.9.13
+ARG INFRACOST_VERSION=0.9.14
 ARG TERRAGRUNT_VERSION=0.35.4
 
 RUN apk -U upgrade && apk add --no-cache \
