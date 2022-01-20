@@ -2,6 +2,7 @@ FROM alpine:3.14.0
 
 RUN apk -U upgrade && apk add --no-cache \
     aws-cli \
+    bash \
     ca-certificates \
     curl \
     git \
