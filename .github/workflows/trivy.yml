@@ -17,11 +17,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Build an image from Dockerfile
+      - name: Build Alpine image from Dockerfile
         run: |
-          docker build -t spacelift:${{ github.sha }} .
+          cd alpine && docker build -t spacelift:${{ github.sha }} .
 
-      - name: Run Trivy vulnerability scanner
+      - name: Build Debian image from Dockerfile
+        run: |
+          cd debian && docker build -t spacelift-debian:${{ github.sha }} .
+
+      - name: Run Trivy vulnerability scanner on Alpine image
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: "spacelift:${{ github.sha }}"
@@ -30,7 +34,21 @@ jobs:
           output: "trivy-results.sarif"
           severity: "CRITICAL,HIGH"
 
-      - name: Upload Trivy scan results to GitHub Security tab
+      - name: Run Trivy vulnerability scanner on Debian image
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: "spacelift-debian:${{ github.sha }}"
+          format: "template"
+          template: "@/contrib/sarif.tpl"
+          output: "trivy-results-debian.sarif"
+          severity: "CRITICAL,HIGH"
+
+      - name: Upload Trivy scan results for Alpine image to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v1
         with:
           sarif_file: "trivy-results.sarif"
+
+      - name: Upload Trivy scan results for Debian image to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: "trivy-results-debian.sarif"
