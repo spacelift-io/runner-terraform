@@ -1,4 +1,4 @@
-FROM alpine:3.14.0
+FROM alpine:3.15
 
 RUN apk -U upgrade && apk add --no-cache \
     aws-cli \
