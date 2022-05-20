@@ -63,5 +63,5 @@ jobs:
           file: ./debian/Dockerfile
           push: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/future' }}
           tags: |
-            ${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:debian
-            ghcr.io/spacelift-io/runner-terraform:debian
+            ${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:${{ github.ref == 'refs/heads/main' && 'debian' || 'debian-future' }}
+            ghcr.io/spacelift-io/runner-terraform:${{ github.ref == 'refs/heads/main' && 'debian' || 'debian-future' }}
