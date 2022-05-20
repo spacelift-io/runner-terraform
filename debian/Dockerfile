@@ -7,6 +7,8 @@ RUN apt-get update && \
     curl \
     wget \
     openssh-client \
+    git \
+    awscli \
     -y 
 
 # Download infracost

@@ -19,11 +19,13 @@ jobs:
 
       - name: Build Alpine image from Dockerfile
         run: |
-          cd alpine && docker build -t spacelift:${{ github.sha }} .
+          path="./alpine"
+          docker build -f $path/Dockerfile -t spacelift:${{ github.sha }} $path
 
       - name: Build Debian image from Dockerfile
         run: |
-          cd debian && docker build -t spacelift-debian:${{ github.sha }} .
+          path="./debian"
+          docker build -f $path/Dockerfile -t spacelift-debian:${{ github.sha }} $path
 
       - name: Run Trivy vulnerability scanner on Alpine image
         uses: aquasecurity/trivy-action@master
