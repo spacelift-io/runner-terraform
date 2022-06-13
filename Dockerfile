@@ -8,7 +8,8 @@ RUN apk -U upgrade && apk add --no-cache \
     git \
     jq \
     openssh \
-    openssh-keygen
+    openssh-keygen \
+    tzdata
 
 # Download infracost
 RUN curl -s -L https://github.com/infracost/infracost/releases/latest/download/infracost-linux-amd64.tar.gz | \
