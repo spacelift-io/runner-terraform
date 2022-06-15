@@ -49,8 +49,11 @@ jobs:
         uses: github/codeql-action/upload-sarif@v1
         with:
           sarif_file: "trivy-results.sarif"
+          category: "alpine"
+
 
       - name: Upload Trivy scan results for Debian image to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v1
         with:
           sarif_file: "trivy-results-debian.sarif"
+          category: "debian"
