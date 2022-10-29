@@ -1,4 +1,6 @@
-FROM alpine:3.14.0
+FROM alpine:3.16
+
+ARG TARGETARCH
 
 RUN apk -U upgrade && apk add --no-cache \
     aws-cli \
@@ -12,12 +14,12 @@ RUN apk -U upgrade && apk add --no-cache \
     tzdata
 
 # Download infracost
-RUN curl -s -L https://github.com/infracost/infracost/releases/latest/download/infracost-linux-amd64.tar.gz | \
+RUN curl -s -L "https://github.com/infracost/infracost/releases/latest/download/infracost-linux-${TARGETARCH}.tar.gz" | \
     tar xz -C /tmp && \
-    mv /tmp/infracost-linux-amd64 /bin/infracost
+    mv "/tmp/infracost-linux-${TARGETARCH}" /bin/infracost
 
 # Download Terragrunt.
-RUN wget -O /bin/terragrunt https://github.com/gruntwork-io/terragrunt/releases/latest/download/terragrunt_linux_amd64 \
+RUN wget -O /bin/terragrunt "https://github.com/gruntwork-io/terragrunt/releases/latest/download/terragrunt_linux_${TARGETARCH}" \
     && chmod +x /bin/terragrunt
 
 RUN echo "hosts: files dns" > /etc/nsswitch.conf \
