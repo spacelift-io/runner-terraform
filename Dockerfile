@@ -1,6 +1,4 @@
-FROM alpine:3.16
-
-ARG TARGETARCH
+FROM alpine:3.14.0
 
 RUN apk -U upgrade && apk add --no-cache \
     aws-cli \
@@ -14,14 +12,13 @@ RUN apk -U upgrade && apk add --no-cache \
     tzdata
 
 # Download infracost
-ADD "https://github.com/infracost/infracost/releases/latest/download/infracost-linux-${TARGETARCH}.tar.gz" /tmp/infracost.tar.gz
-RUN tar -xzf /tmp/infracost.tar.gz -C /bin && \
-    mv "/bin/infracost-linux-${TARGETARCH}" /bin/infracost && \
-    rm /tmp/infracost.tar.gz
+RUN curl -s -L https://github.com/infracost/infracost/releases/latest/download/infracost-linux-amd64.tar.gz | \
+    tar xz -C /tmp && \
+    mv /tmp/infracost-linux-amd64 /bin/infracost
 
 # Download Terragrunt.
-ADD "https://github.com/gruntwork-io/terragrunt/releases/latest/download/terragrunt_linux_${TARGETARCH}" /bin/terragrunt
-RUN chmod +x /bin/terragrunt
+RUN wget -O /bin/terragrunt https://github.com/gruntwork-io/terragrunt/releases/latest/download/terragrunt_linux_amd64 \
+    && chmod +x /bin/terragrunt
 
 RUN echo "hosts: files dns" > /etc/nsswitch.conf \
     && adduser --disabled-password --uid=1983 spacelift
