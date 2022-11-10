@@ -10,36 +10,27 @@ on:
 
 jobs:
   build:
-    strategy:
-      matrix:
-        arch: [amd64, arm64]
     name: Analyze
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@main
+        uses: actions/checkout@v2
 
-      - name: Set up QEMU
-        if: matrix.arch == 'arm64'
-        uses: docker/setup-qemu-action@v2
-        with:
-          platforms: linux/arm64
-
-      - name: Build an image from Dockerfile (${{ matrix.arch }} image)
+      - name: Build an image from Dockerfile
         run: |
-          docker build --platform linux/${{ matrix.arch }} --pull --build-arg TARGETARCH=${{ matrix.arch }} -t spacelift:${{ github.sha }}-${{ matrix.arch }} .
+          docker build -t spacelift:${{ github.sha }} .
 
-      - name: Run Trivy vulnerability scanner (${{ matrix.arch }} image)
+      - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: "spacelift:${{ github.sha }}-${{ matrix.arch }}"
+          image-ref: "spacelift:${{ github.sha }}"
           format: "template"
           template: "@/contrib/sarif.tpl"
           output: "trivy-results.sarif"
           severity: "CRITICAL,HIGH"
 
-      - name: Upload Trivy scan results to GitHub Security tab (${{ matrix.arch }} image)
-        uses: github/codeql-action/upload-sarif@v2
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v1
         with:
           sarif_file: "trivy-results.sarif"
