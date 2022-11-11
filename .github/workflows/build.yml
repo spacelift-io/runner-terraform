@@ -32,7 +32,12 @@ jobs:
 
       # Can't use the output of the previous step because it's
       # a multiplatform build, so we need to build it again.
-      - name: Test if terragrunt & infracost works
+      - name: Test if terragrunt & infracost works (AMD64)
         run: |
           docker build --build-arg TARGETARCH=amd64 -t runner-terraform-test .
+          docker run --rm runner-terraform-test sh -c "terragrunt --version && infracost --version"
+
+      - name: Test if terragrunt & infracost works (ARM64)
+        run: |
+          docker build --build-arg TARGETARCH=arm64 -t runner-terraform-test .
           docker run --rm runner-terraform-test sh -c "terragrunt --version && infracost --version"
