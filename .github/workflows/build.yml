@@ -4,7 +4,6 @@ on:
   push:
     ignore-branches:
       - main
-      - future
 
 jobs:
   deployment:
@@ -23,7 +22,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Build and push the image
+      - name: Test if image can be built with buildx
         uses: docker/build-push-action@v3
         with:
           push: false
@@ -32,12 +31,12 @@ jobs:
 
       # Can't use the output of the previous step because it's
       # a multiplatform build, so we need to build it again.
-      - name: Test if terragrunt & infracost works (AMD64)
+      - name: Test if terragrunt & infracost are executable (AMD64)
         run: |
           docker build --build-arg TARGETARCH=amd64 -t runner-terraform-test .
           docker run --rm runner-terraform-test sh -c "terragrunt --version && infracost --version"
 
-      - name: Test if terragrunt & infracost works (ARM64)
+      - name: Test if terragrunt & infracost are executable (ARM64)
         run: |
           docker build --build-arg TARGETARCH=arm64 -t runner-terraform-test .
           docker run --rm runner-terraform-test sh -c "terragrunt --version && infracost --version"
