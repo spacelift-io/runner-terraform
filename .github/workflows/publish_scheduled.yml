@@ -1,0 +1,53 @@
+name: Scheduled publish
+
+on:
+  schedule:
+    - cron: '20 8 * * 1'
+
+jobs:
+  deployment:
+    name: Rebuild and publish the latest tagged image
+    runs-on: ubuntu-latest
+    container: docker
+    permissions:
+      id-token: write
+      contents: write
+      packages: write
+
+    steps:
+      - name: Get latest tag
+        uses: oprypin/find-latest-tag@v1
+        id: latest-tag
+        with:
+          repository: ${{ github.repository }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set current date as env variable
+        run: echo "TODAY=$(date +'%Y%m%d')" >> $GITHUB_ENV
+
+      - name: Set nicely formatted current date as env variable
+        run: echo "TODAY_FORMATTED=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+        
+      - name: Checkout publish workflow
+        uses: Bhacaz/checkout-files@v2
+        with:
+          files: .github/workflows/publish/action.yml
+
+      - name: Build and push weekly image
+        uses: ./.github/workflows/publish
+        with:
+          aws_role_to_assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          git_tag: ${{ steps.latest-tag.outputs.tag }}
+          publish_release: true
+          release_title: ${{ steps.latest-tag.outputs.tag }} - weekly release (${{ env.TODAY_FORMATTED }})
+          release_body: |
+            ## Weekly rebuild
+            This is a weekly rebuild of the latest image (`${{ steps.latest-tag.outputs.tag }}`).
+            The image is rebuilt to ensure that it is up to date with the latest security patches.
+          checkout_ref: ${{ steps.latest-tag.outputs.tag }}
+          image_tags: |
+            ${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:latest
+            ${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:${{ steps.latest-tag.outputs.tag }}_${{ env.TODAY }}
+            ghcr.io/spacelift-io/runner-terraform:latest
+            ghcr.io/spacelift-io/runner-terraform:${{ steps.latest-tag.outputs.tag }}_${{ env.TODAY }}

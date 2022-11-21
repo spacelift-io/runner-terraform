@@ -1,0 +1,88 @@
+name: Publish
+description: Builds and pushes the Docker image to the public ECR and GitHub registry
+
+inputs:
+  aws_role_to_assume:
+    description: The AWS role to assume. Used to authenticate with ECR.
+    required: true
+  github_token:
+    description: The GitHub token. Used to authenticate with GitHub registry.
+    required: true
+  git_tag:
+    description: Git tag to use for the GitHub Release
+    required: false
+  image_tags:
+    description: The tags of the Docker image to push
+    required: true
+  publish_release:
+    description: Whether to publish a GitHub Release
+    required: true
+    default: false
+  release_title:
+    description: The title of the GitHub Release.
+    required: false
+  release_body:
+    description: The body of the GitHub Release. If not provided, the body will be auto-generated.
+    required: false
+  checkout_ref:
+    description: The ref to checkout. If not provided, the basic checkout action will be used.
+    required: false
+
+runs:
+  using: composite
+  steps:
+      - name: Check out repository code
+        uses: actions/checkout@main
+        with:
+          fetch-depth: 0
+          ref: ${{ inputs.checkout_ref }}
+
+      - name: Install the latest AWS CLI
+        shell: sh
+        run: |
+          apk add --no-cache python3 py3-pip
+          pip3 install --upgrade pip
+          pip3 install awscli
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-region: us-east-1
+          role-to-assume: ${{ inputs.aws_role_to_assume }}
+          role-duration-seconds: 900
+
+      - name: Log in to Amazon public ECR
+        run: aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
+
+      - name: Log in to GitHub registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ inputs.github_token }}
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: linux/arm64
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Build and push the image
+        uses: docker/build-push-action@v3
+        with:
+          push: true
+          context: .
+          platforms: linux/amd64,linux/arm64
+          tags: ${{ inputs.image_tags }}
+
+      - name: Create release
+        uses: ncipollo/release-action@v1
+        if: inputs.publish_release == 'true'
+        with:
+          name: ${{ inputs.release_title }}
+          tag: ${{ inputs.git_tag }}
+          body: ${{ inputs.release_body }}
+          generateReleaseNotes: true
+          allowUpdates: true
