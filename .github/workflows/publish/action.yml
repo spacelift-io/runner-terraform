@@ -52,6 +52,7 @@ runs:
           role-duration-seconds: 900
 
       - name: Log in to Amazon public ECR
+        shell: sh
         run: aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
 
       - name: Log in to GitHub registry
