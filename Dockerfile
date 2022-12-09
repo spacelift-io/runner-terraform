@@ -1,4 +1,6 @@
-FROM alpine:3.16
+ARG BASE_IMAGE=alpine:3.17
+
+FROM ${BASE_IMAGE}
 
 ARG TARGETARCH
 

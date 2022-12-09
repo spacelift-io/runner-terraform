@@ -21,12 +21,24 @@ jobs:
         with:
           files: .github/workflows/publish/action.yml
 
-      - name: Build and push future image
+      - name: Build and push future image without gcloud
         uses: ./.github/workflows/publish
         with:
+          base_image: 'alpine:3.17'
           aws_role_to_assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_release: false
           image_tags: |
             ${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:future
             ghcr.io/spacelift-io/runner-terraform:future
+
+      - name: Build and push future image with gcloud
+        uses: ./.github/workflows/publish
+        with:
+          base_image: 'gcr.io/google.com/cloudsdktool/google-cloud-cli:alpine'
+          aws_role_to_assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_release: false
+          image_tags: |
+            ${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}-gcp:future
+            ghcr.io/spacelift-io/runner-terraform-gcp:future

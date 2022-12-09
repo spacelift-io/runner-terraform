@@ -2,6 +2,9 @@ name: Publish
 description: Builds and pushes the Docker image to the public ECR and GitHub registry
 
 inputs:
+  base_image:
+    description: Base image to use for the Dockerfile
+    required: true
   aws_role_to_assume:
     description: The AWS role to assume. Used to authenticate with ECR.
     required: true
@@ -75,6 +78,8 @@ runs:
         with:
           push: true
           context: .
+          args: |
+            BASE_IMAGE=${{ inputs.base_image }}
           platforms: linux/amd64,linux/arm64
           tags: ${{ inputs.image_tags }}
 
