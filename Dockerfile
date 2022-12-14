@@ -1,4 +1,4 @@
-FROM python:3.9-alpine3.14 as aws-cli-builder
+FROM python:3.9-alpine3.16 as aws-cli-builder
 
 ARG TARGETARCH
 
@@ -23,7 +23,7 @@ RUN unzip /aws/dist/awscli-exe.zip && \
     ./aws/install --bin-dir /aws-cli-bin && \
     /aws-cli-bin/aws --version
 
-FROM alpine:3.14.8 as runner
+FROM alpine:3.16 as runner
 
 ARG TARGETARCH
 
