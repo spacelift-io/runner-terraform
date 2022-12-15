@@ -21,6 +21,11 @@ jobs:
         with:
           files: .github/workflows/publish/action.yml
 
+      - name: Checkout repository code
+        uses: actions/checkout@main
+        with:
+          fetch-depth: 0
+
       - name: Build and push future image without gcloud
         uses: ./.github/workflows/publish
         with:
@@ -40,5 +45,5 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_release: false
           image_tags: |
-            ${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}-gcp:future
-            ghcr.io/spacelift-io/runner-terraform-gcp:future
+            ${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:gcp-future
+            ghcr.io/spacelift-io/runner-terraform:gcp-future

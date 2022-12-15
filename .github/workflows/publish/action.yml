@@ -27,19 +27,10 @@ inputs:
   release_body:
     description: The body of the GitHub Release. If not provided, the body will be auto-generated.
     required: false
-  checkout_ref:
-    description: The ref to checkout. If not provided, the basic checkout action will be used.
-    required: false
 
 runs:
   using: composite
   steps:
-      - name: Check out repository code
-        uses: actions/checkout@main
-        with:
-          fetch-depth: 0
-          ref: ${{ inputs.checkout_ref }}
-
       - name: Install the latest AWS CLI
         shell: sh
         run: |
