@@ -33,7 +33,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: false
-          args: |
+          build-args: |
             BASE_IMAGE=${{ matrix.base_image }}
           platforms: linux/amd64,linux/arm64
           tags: runner-terraform:latest
