@@ -33,9 +33,10 @@ jobs:
         with:
           files: .github/workflows/publish/action.yml
 
-      - name: Build and push weekly image
+      - name: Build and push weekly image without gcloud
         uses: ./.github/workflows/publish
         with:
+          base_image: 'alpine:3.17'
           aws_role_to_assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           git_tag: ${{ steps.latest-tag.outputs.tag }}
@@ -45,9 +46,36 @@ jobs:
             ## Weekly rebuild
             This is a weekly rebuild of the latest image (`${{ steps.latest-tag.outputs.tag }}`).
             The image is rebuilt to ensure that it is up to date with the latest security patches.
+            ## Updated images
+            ### Without gcloud CLI
+            - `${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:latest`
+            - `${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:${{ steps.latest-tag.outputs.tag }}_${{ env.TODAY }}`
+            - `ghcr.io/spacelift-io/runner-terraform:latest`
+            - `ghcr.io/spacelift-io/runner-terraform:${{ steps.latest-tag.outputs.tag }}_${{ env.TODAY }}`
+
+            ### With gcloud CLI
+            - `${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}-gcp:latest`
+            - `${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}-gcp:${{ steps.latest-tag.outputs.tag }}_${{ env.TODAY }}`
+            - `ghcr.io/spacelift-io/runner-terraform-gcp:latest`
+            - `ghcr.io/spacelift-io/runner-terraform-gcp:${{ steps.latest-tag.outputs.tag }}_${{ env.TODAY }}`
           checkout_ref: ${{ steps.latest-tag.outputs.tag }}
           image_tags: |
             ${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:latest
             ${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:${{ steps.latest-tag.outputs.tag }}_${{ env.TODAY }}
             ghcr.io/spacelift-io/runner-terraform:latest
             ghcr.io/spacelift-io/runner-terraform:${{ steps.latest-tag.outputs.tag }}_${{ env.TODAY }}
+
+      - name: Build and push weekly image with gcloud
+        uses: ./.github/workflows/publish
+        with:
+          base_image: 'gcr.io/google.com/cloudsdktool/google-cloud-cli:alpine'
+          aws_role_to_assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          git_tag: ${{ steps.latest-tag.outputs.tag }}
+          publish_release: false
+          checkout_ref: ${{ steps.latest-tag.outputs.tag }}
+          image_tags: |
+            ${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}-gcp:latest
+            ${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}-gcp:${{ steps.latest-tag.outputs.tag }}_${{ env.TODAY }}
+            ghcr.io/spacelift-io/runner-terraform-gcp:latest
+            ghcr.io/spacelift-io/runner-terraform-gcp:${{ steps.latest-tag.outputs.tag }}_${{ env.TODAY }}

@@ -5,8 +5,15 @@ on:
     ignore-branches:
       - main
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
   deployment:
+    strategy:
+      matrix:
+        base_image: ["alpine:3.17", "gcr.io/google.com/cloudsdktool/google-cloud-cli:alpine"]
     name: Build the image
     runs-on: ubuntu-latest
     container: docker
@@ -26,17 +33,25 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: false
+          args: |
+            BASE_IMAGE=${{ matrix.base_image }}
           platforms: linux/amd64,linux/arm64
           tags: runner-terraform:latest
 
       # Can't use the output of the previous step because it's
       # a multiplatform build, so we need to build it again.
-      - name: Test if terragrunt & infracost are executable (AMD64)
+      - name: Test if terragrunt & infracost & gcloud are executable (AMD64)
         run: |
-          docker build --build-arg TARGETARCH=amd64 -t runner-terraform-test .
+          docker build --build-arg TARGETARCH=amd64 --build-arg BASE_IMAGE=${{ matrix.base_image }} -t runner-terraform-test .
           docker run --rm runner-terraform-test sh -c "terragrunt --version && infracost --version"
+          if [ ${{ matrix.base_image }} = "gcr.io/google.com/cloudsdktool/google-cloud-cli:alpine" ]; then
+            docker run --rm runner-terraform-test sh -c "gcloud --version"
+          fi
 
-      - name: Test if terragrunt & infracost are executable (ARM64)
+      - name: Test if terragrunt & infracost & gcloud are executable (ARM64)
         run: |
-          docker build --build-arg TARGETARCH=arm64 -t runner-terraform-test .
+          docker build --build-arg TARGETARCH=arm64 --build-arg BASE_IMAGE=${{ matrix.base_image }} -t runner-terraform-test .
           docker run --rm runner-terraform-test sh -c "terragrunt --version && infracost --version"
+          if [ ${{ matrix.base_image }} = "gcr.io/google.com/cloudsdktool/google-cloud-cli:alpine" ]; then
+            docker run --rm runner-terraform-test sh -c "gcloud --version"
+          fi

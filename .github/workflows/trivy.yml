@@ -8,13 +8,20 @@ on:
   schedule:
     - cron: "19 7 * * 0"
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
   build:
     strategy:
       matrix:
         arch: [amd64, arm64]
+        base_image: ["alpine:3.17", "gcr.io/google.com/cloudsdktool/google-cloud-cli:alpine"]
     name: Analyze
     runs-on: ubuntu-latest
+    env:
+      IMAGE_TAG: spacelift:${{ github.sha }}-${{ matrix.arch }}
 
     steps:
       - name: Checkout code
@@ -26,20 +33,23 @@ jobs:
         with:
           platforms: linux/arm64
 
-      - name: Build an image from Dockerfile (${{ matrix.arch }} image)
+      - name: Build an image from Dockerfile (${{ matrix.base_image }} ${{ matrix.arch }} image)
+        env:
+          PLATFORM: linux/${{ matrix.arch }}
+          DOCKERFILE: ${{ matrix.base_image }}
         run: |
-          docker build --platform linux/${{ matrix.arch }} --pull --build-arg TARGETARCH=${{ matrix.arch }} -t spacelift:${{ github.sha }}-${{ matrix.arch }} .
+          docker build --platform $PLATFORM --pull --build-arg TARGETARCH=${{ matrix.arch }} --build-arg BASE_IMAGE=${{ matrix.base_image }} -t $IMAGE_TAG .
 
-      - name: Run Trivy vulnerability scanner (${{ matrix.arch }} image)
+      - name: Run Trivy vulnerability scanner (${{ matrix.base_image }} ${{ matrix.arch }} image)
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: "spacelift:${{ github.sha }}-${{ matrix.arch }}"
+          image-ref: ${{ env.IMAGE_TAG }}
           format: "template"
           template: "@/contrib/sarif.tpl"
           output: "trivy-results.sarif"
           severity: "CRITICAL,HIGH"
 
-      - name: Upload Trivy scan results to GitHub Security tab (${{ matrix.arch }} image)
+      - name: Upload Trivy scan results to GitHub Security tab (${{ matrix.base_image }} ${{ matrix.arch }} image)
         uses: github/codeql-action/upload-sarif@v2
         with:
           sarif_file: "trivy-results.sarif"
