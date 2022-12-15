@@ -23,10 +23,10 @@ jobs:
           repository: ${{ github.repository }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Checkout publish workflow
-        uses: Bhacaz/checkout-files@v2
+      - name: Checkout repository code
+        uses: actions/checkout@main
         with:
-          files: .github/workflows/publish/action.yml
+          fetch-depth: 0
   
       - name: Build and push latest image without gcloud
         uses: ./.github/workflows/publish
@@ -52,7 +52,7 @@ jobs:
           git_tag: ${{ steps.latest-tag.outputs.tag }}
           publish_release: false
           image_tags: |
-            ${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}-gcp:latest
-            ${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}-gcp:${{ steps.latest-tag.outputs.tag }}
-            ghcr.io/spacelift-io/runner-terraform-gcp:latest
-            ghcr.io/spacelift-io/runner-terraform-gcp:${{ steps.latest-tag.outputs.tag }}
+            ${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:gcp-latest
+            ${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:gcp-${{ steps.latest-tag.outputs.tag }}
+            ghcr.io/spacelift-io/runner-terraform:gcp-latest
+            ghcr.io/spacelift-io/runner-terraform:gcp-${{ steps.latest-tag.outputs.tag }}

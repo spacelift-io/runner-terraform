@@ -22,16 +22,17 @@ jobs:
           repository: ${{ github.repository }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Checkout repository code
+        uses: actions/checkout@main
+        with:
+          ref: ${{ steps.latest-tag.outputs.tag }}
+          fetch-depth: 0
+
       - name: Set current date as env variable
         run: echo "TODAY=$(date +'%Y%m%d')" >> $GITHUB_ENV
 
       - name: Set nicely formatted current date as env variable
         run: echo "TODAY_FORMATTED=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
-        
-      - name: Checkout publish workflow
-        uses: Bhacaz/checkout-files@v2
-        with:
-          files: .github/workflows/publish/action.yml
 
       - name: Build and push weekly image without gcloud
         uses: ./.github/workflows/publish
@@ -54,11 +55,10 @@ jobs:
             - `ghcr.io/spacelift-io/runner-terraform:${{ steps.latest-tag.outputs.tag }}_${{ env.TODAY }}`
 
             ### With gcloud CLI
-            - `${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}-gcp:latest`
-            - `${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}-gcp:${{ steps.latest-tag.outputs.tag }}_${{ env.TODAY }}`
-            - `ghcr.io/spacelift-io/runner-terraform-gcp:latest`
-            - `ghcr.io/spacelift-io/runner-terraform-gcp:${{ steps.latest-tag.outputs.tag }}_${{ env.TODAY }}`
-          checkout_ref: ${{ steps.latest-tag.outputs.tag }}
+            - `${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:gcp-latest`
+            - `${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:gcp-${{ steps.latest-tag.outputs.tag }}_${{ env.TODAY }}`
+            - `ghcr.io/spacelift-io/runner-terraform:gcp-latest`
+            - `ghcr.io/spacelift-io/runner-terraform:gcp-${{ steps.latest-tag.outputs.tag }}_${{ env.TODAY }}`
           image_tags: |
             ${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:latest
             ${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:${{ steps.latest-tag.outputs.tag }}_${{ env.TODAY }}
@@ -73,9 +73,8 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           git_tag: ${{ steps.latest-tag.outputs.tag }}
           publish_release: false
-          checkout_ref: ${{ steps.latest-tag.outputs.tag }}
           image_tags: |
-            ${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}-gcp:latest
-            ${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}-gcp:${{ steps.latest-tag.outputs.tag }}_${{ env.TODAY }}
-            ghcr.io/spacelift-io/runner-terraform-gcp:latest
-            ghcr.io/spacelift-io/runner-terraform-gcp:${{ steps.latest-tag.outputs.tag }}_${{ env.TODAY }}
+            ${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:gcp-latest
+            ${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:gcp-${{ steps.latest-tag.outputs.tag }}_${{ env.TODAY }}
+            ghcr.io/spacelift-io/runner-terraform:gcp-latest
+            ghcr.io/spacelift-io/runner-terraform:gcp-${{ steps.latest-tag.outputs.tag }}_${{ env.TODAY }}
