@@ -5,7 +5,6 @@ FROM ${BASE_IMAGE}
 ARG TARGETARCH
 
 RUN apk -U upgrade && apk add --no-cache \
-    aws-cli \
     bash \
     ca-certificates \
     curl \
@@ -14,6 +13,9 @@ RUN apk -U upgrade && apk add --no-cache \
     openssh \
     openssh-keygen \
     tzdata
+
+COPY --from=ghcr.io/spacelift-io/aws-cli-alpine /usr/local/aws-cli/ /usr/local/aws-cli/
+COPY --from=ghcr.io/spacelift-io/aws-cli-alpine /aws-cli-bin/ /usr/local/bin/
 
 # Download infracost
 ADD "https://github.com/infracost/infracost/releases/latest/download/infracost-linux-${TARGETARCH}.tar.gz" /tmp/infracost.tar.gz

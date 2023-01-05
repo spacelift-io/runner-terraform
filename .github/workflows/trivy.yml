@@ -44,10 +44,10 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: ${{ env.IMAGE_TAG }}
-          format: "template"
-          template: "@/contrib/sarif.tpl"
+          format: "sarif"
           output: "trivy-results.sarif"
           severity: "CRITICAL,HIGH"
+          timeout: "10m"
 
       - name: Upload Trivy scan results to GitHub Security tab (${{ matrix.base_image }} ${{ matrix.arch }} image)
         uses: github/codeql-action/upload-sarif@v2

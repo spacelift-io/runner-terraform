@@ -8,6 +8,14 @@ The image is pushed to the `public.ecr.aws/spacelift/runner-terraform` public re
 is also pushed to the `ghcr.io/spacelift-io/runner-terraform` as a backup in case of issues
 with ECR.
 
+## Images
+
+We publish two images. One has `gcloud` CLI bundled, the other does not.
+This is because `gcloud` is a very large package and we want to keep the image size down.
+
+- `spacelift-io/runner-terraform:latest` -> no `gcloud` CLI
+- `spacelift-io/runner-terraform:gcp-latest` -> with `gcloud` CLI
+
 ## Branch Model
 
 All changes merged to `main` branch are automatically built and pushed to the Docker repository with the `future` tag.
