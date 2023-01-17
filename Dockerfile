@@ -12,7 +12,10 @@ RUN apk -U upgrade && apk add --no-cache \
     jq \
     openssh \
     openssh-keygen \
+    python3 \
     tzdata
+
+RUN [ -e /usr/bin/python ] || ln -s python3 /usr/bin/python
 
 COPY --from=ghcr.io/spacelift-io/aws-cli-alpine /usr/local/aws-cli/ /usr/local/aws-cli/
 COPY --from=ghcr.io/spacelift-io/aws-cli-alpine /aws-cli-bin/ /usr/local/bin/
