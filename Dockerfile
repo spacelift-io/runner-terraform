@@ -9,6 +9,7 @@ RUN apk -U upgrade && apk add --no-cache \
     ca-certificates \
     curl \
     git \
+    github-cli \
     jq \
     openssh \
     openssh-keygen \
