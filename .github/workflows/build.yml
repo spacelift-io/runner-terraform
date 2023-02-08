@@ -43,7 +43,7 @@ jobs:
       - name: Test if terragrunt & infracost & gcloud are executable (AMD64)
         run: |
           docker build --build-arg TARGETARCH=amd64 --build-arg BASE_IMAGE=${{ matrix.base_image }} -t runner-terraform-test .
-          docker run --rm runner-terraform-test sh -c "terragrunt --version && infracost --version && aws --version && python --version"
+          docker run --rm runner-terraform-test sh -c "terragrunt --version && infracost --version && aws --version && python --version && gh --version"
           if [ ${{ matrix.base_image }} = "gcr.io/google.com/cloudsdktool/google-cloud-cli:alpine" ]; then
             docker run --rm runner-terraform-test sh -c "gcloud --version"
           fi
@@ -51,7 +51,7 @@ jobs:
       - name: Test if terragrunt & infracost & gcloud are executable (ARM64)
         run: |
           docker build --build-arg TARGETARCH=arm64 --build-arg BASE_IMAGE=${{ matrix.base_image }} -t runner-terraform-test .
-          docker run --rm runner-terraform-test sh -c "terragrunt --version && infracost --version && aws --version && python --version"
+          docker run --rm runner-terraform-test sh -c "terragrunt --version && infracost --version && aws --version && python --version && gh --version"
           if [ ${{ matrix.base_image }} = "gcr.io/google.com/cloudsdktool/google-cloud-cli:alpine" ]; then
             docker run --rm runner-terraform-test sh -c "gcloud --version"
           fi
