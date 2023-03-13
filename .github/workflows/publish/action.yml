@@ -2,8 +2,8 @@ name: Publish
 description: Builds and pushes the Docker image to the public ECR and GitHub registry
 
 inputs:
-  base_image:
-    description: Base image to use for the Dockerfile
+  bake_target:
+    description: The target of the bake action
     required: true
   aws_role_to_assume:
     description: The AWS role to assume. Used to authenticate with ECR.
@@ -14,8 +14,8 @@ inputs:
   git_tag:
     description: Git tag to use for the GitHub Release
     required: false
-  image_tags:
-    description: The tags of the Docker image to push
+  bake_set:
+    description: The `set` argument of the bake action
     required: true
   publish_release:
     description: Whether to publish a GitHub Release
@@ -39,7 +39,7 @@ runs:
           pip3 install awscli
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-region: us-east-1
           role-to-assume: ${{ inputs.aws_role_to_assume }}
@@ -65,14 +65,11 @@ runs:
         uses: docker/setup-buildx-action@v2
 
       - name: Build and push the image
-        uses: docker/build-push-action@v3
+        uses: docker/bake-action@v2
         with:
           push: true
-          context: .
-          build-args: |
-            BASE_IMAGE=${{ inputs.base_image }}
-          platforms: linux/amd64,linux/arm64
-          tags: ${{ inputs.image_tags }}
+          targets: ${{ inputs.bake_target }}
+          set: ${{ inputs.bake_set }}
 
       - name: Create release
         uses: ncipollo/release-action@v1
