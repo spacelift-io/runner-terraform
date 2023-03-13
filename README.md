@@ -10,10 +10,10 @@ with ECR.
 
 ## Images
 
-We publish two images. One has `gcloud` CLI bundled, the other does not.
+We publish two images. The "normal" has `aws` cli v2 included, the other has `gcloud`.
 This is because `gcloud` is a very large package and we want to keep the image size down.
 
-- `spacelift-io/runner-terraform:latest` -> no `gcloud` CLI
+- `spacelift-io/runner-terraform:latest` -> with `aws` CLI
 - `spacelift-io/runner-terraform:gcp-latest` -> with `gcloud` CLI
 
 ## Branch Model
@@ -28,4 +28,4 @@ $ git tag -a v1.1.0 -m "Release v1.1.0"
 $ git push origin v1.1.0
 ```
 
-Note: we also have a weekly cron job that re-runs the `main` branch just to have the latest package updates.
+We also have a weekly cron job that re-runs the `main` branch just to have the latest package updates.

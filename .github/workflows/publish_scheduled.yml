@@ -3,6 +3,7 @@ name: Scheduled publish
 on:
   schedule:
     - cron: '20 8 * * 1'
+  workflow_dispatch:
 
 jobs:
   deployment:
@@ -34,13 +35,24 @@ jobs:
       - name: Set nicely formatted current date as env variable
         run: echo "TODAY_FORMATTED=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
 
-      - name: Build and push weekly image without gcloud
+      - name: Create weekly tag
+        id: tag
+        env:
+          TAG: ${{ steps.latest-tag.outputs.tag }}_${{ env.TODAY }}
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git tag -a $TAG -m "Weekly rebuild of ${{ steps.latest-tag.outputs.tag }}"
+          git push origin $TAG
+          echo "TAG=$TAG" >> $GITHUB_OUTPUT
+
+      - name: Build and push weekly image (w/ aws cli)
         uses: ./.github/workflows/publish
         with:
-          base_image: 'alpine:3.17'
+          bake_target: aws
           aws_role_to_assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          git_tag: ${{ steps.latest-tag.outputs.tag }}
+          git_tag: ${{ steps.tag.outputs.TAG }}
           publish_release: true
           release_title: ${{ steps.latest-tag.outputs.tag }} - weekly release (${{ env.TODAY_FORMATTED }})
           release_body: |
@@ -48,33 +60,33 @@ jobs:
             This is a weekly rebuild of the latest image (`${{ steps.latest-tag.outputs.tag }}`).
             The image is rebuilt to ensure that it is up to date with the latest security patches.
             ## Updated images
-            ### Without gcloud CLI
+            ### Image with aws cli
             - `${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:latest`
             - `${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:${{ steps.latest-tag.outputs.tag }}_${{ env.TODAY }}`
             - `ghcr.io/spacelift-io/runner-terraform:latest`
             - `ghcr.io/spacelift-io/runner-terraform:${{ steps.latest-tag.outputs.tag }}_${{ env.TODAY }}`
 
-            ### With gcloud CLI
+            ### Image with gcloud cli
             - `${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:gcp-latest`
             - `${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:gcp-${{ steps.latest-tag.outputs.tag }}_${{ env.TODAY }}`
             - `ghcr.io/spacelift-io/runner-terraform:gcp-latest`
             - `ghcr.io/spacelift-io/runner-terraform:gcp-${{ steps.latest-tag.outputs.tag }}_${{ env.TODAY }}`
-          image_tags: |
-            ${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:latest
-            ${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:${{ steps.latest-tag.outputs.tag }}_${{ env.TODAY }}
-            ghcr.io/spacelift-io/runner-terraform:latest
-            ghcr.io/spacelift-io/runner-terraform:${{ steps.latest-tag.outputs.tag }}_${{ env.TODAY }}
+          bake_set: |
+            aws.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:latest
+            aws.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:${{ steps.latest-tag.outputs.tag }}_${{ env.TODAY }}
+            aws.tags=ghcr.io/spacelift-io/runner-terraform:latest
+            aws.tags=ghcr.io/spacelift-io/runner-terraform:${{ steps.latest-tag.outputs.tag }}_${{ env.TODAY }}
 
-      - name: Build and push weekly image with gcloud
+      - name: Build and push weekly image (w/ aws gcloud cli)
         uses: ./.github/workflows/publish
         with:
-          base_image: 'gcr.io/google.com/cloudsdktool/google-cloud-cli:alpine'
+          bake_target: gcp
           aws_role_to_assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           git_tag: ${{ steps.latest-tag.outputs.tag }}
           publish_release: false
-          image_tags: |
-            ${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:gcp-latest
-            ${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:gcp-${{ steps.latest-tag.outputs.tag }}_${{ env.TODAY }}
-            ghcr.io/spacelift-io/runner-terraform:gcp-latest
-            ghcr.io/spacelift-io/runner-terraform:gcp-${{ steps.latest-tag.outputs.tag }}_${{ env.TODAY }}
+          bake_set: |
+            gcp.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:gcp-latest
+            gcp.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:gcp-${{ steps.latest-tag.outputs.tag }}_${{ env.TODAY }}
+            gcp.tags=ghcr.io/spacelift-io/runner-terraform:gcp-latest
+            gcp.tags=ghcr.io/spacelift-io/runner-terraform:gcp-${{ steps.latest-tag.outputs.tag }}_${{ env.TODAY }}
