@@ -31,23 +31,17 @@ inputs:
 runs:
   using: composite
   steps:
-      - name: Install the latest AWS CLI
-        shell: sh
-        run: |
-          apk add --no-cache python3 py3-pip
-          pip3 install --upgrade pip
-          pip3 install awscli
-
-      - name: Configure AWS credentials
+      - name: Configure AWS credentials for public ECR
         uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-region: us-east-1
           role-to-assume: ${{ inputs.aws_role_to_assume }}
           role-duration-seconds: 900
 
-      - name: Log in to Amazon public ECR
-        shell: sh
-        run: aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
+      - name: Login to Amazon ECR Public
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          registry-type: public
 
       - name: Log in to GitHub registry
         uses: docker/login-action@v2
