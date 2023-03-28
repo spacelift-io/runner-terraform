@@ -28,31 +28,31 @@ jobs:
         with:
           fetch-depth: 0
   
-      - name: Build and push latest image without gcloud
+      - name: Build and push latest image (w/ aws cli)
         uses: ./.github/workflows/publish
         with:
-          base_image: 'alpine:3.17'
+          bake_target: aws
           aws_role_to_assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           git_tag: ${{ steps.latest-tag.outputs.tag }}
           publish_release: true
           release_title: ${{ steps.latest-tag.outputs.tag }}
-          image_tags: |
-            ${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:latest
-            ${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:${{ steps.latest-tag.outputs.tag }}
-            ghcr.io/spacelift-io/runner-terraform:latest
-            ghcr.io/spacelift-io/runner-terraform:${{ steps.latest-tag.outputs.tag }}
+          bake_set: |
+            aws.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:latest
+            aws.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:${{ steps.latest-tag.outputs.tag }}
+            aws.tags=ghcr.io/spacelift-io/runner-terraform:latest
+            aws.tags=ghcr.io/spacelift-io/runner-terraform:${{ steps.latest-tag.outputs.tag }}
 
-      - name: Build and push latest image with gcloud
+      - name: Build and push latest image (w/ gcloud cli)
         uses: ./.github/workflows/publish
         with:
-          base_image: 'gcr.io/google.com/cloudsdktool/google-cloud-cli:alpine'
+          bake_target: gcp
           aws_role_to_assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           git_tag: ${{ steps.latest-tag.outputs.tag }}
           publish_release: false
-          image_tags: |
-            ${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:gcp-latest
-            ${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:gcp-${{ steps.latest-tag.outputs.tag }}
-            ghcr.io/spacelift-io/runner-terraform:gcp-latest
-            ghcr.io/spacelift-io/runner-terraform:gcp-${{ steps.latest-tag.outputs.tag }}
+          bake_set: |
+            gcp.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:gcp-latest
+            gcp.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:gcp-${{ steps.latest-tag.outputs.tag }}
+            gcp.tags=ghcr.io/spacelift-io/runner-terraform:gcp-latest
+            gcp.tags=ghcr.io/spacelift-io/runner-terraform:gcp-${{ steps.latest-tag.outputs.tag }}
