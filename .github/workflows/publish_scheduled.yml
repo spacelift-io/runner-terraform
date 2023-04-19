@@ -9,7 +9,6 @@ jobs:
   deployment:
     name: Rebuild and publish the latest tagged image
     runs-on: ubuntu-latest
-    container: docker
     permissions:
       id-token: write
       contents: write

@@ -2,8 +2,7 @@ name: Build
 
 on:
   push:
-    ignore-branches:
-      - main
+    branches-ignore: [main]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
@@ -17,7 +16,6 @@ jobs:
         platform: [linux/amd64, linux/arm64]
     name: Build the image
     runs-on: ubuntu-latest
-    container: docker
     steps:
       - name: Check out repository code
         uses: actions/checkout@main
