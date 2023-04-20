@@ -9,7 +9,6 @@ jobs:
   deployment:
     name: Build and publish future tag
     runs-on: ubuntu-latest
-    container: docker
     permissions:
       id-token: write
       contents: write

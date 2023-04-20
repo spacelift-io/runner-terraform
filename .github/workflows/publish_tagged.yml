@@ -9,7 +9,6 @@ jobs:
   deployment:
     name: Build and publish the newly tagged image
     runs-on: ubuntu-latest
-    container: docker
     permissions:
       id-token: write
       contents: write
