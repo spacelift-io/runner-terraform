@@ -2,7 +2,9 @@ name: Build
 
 on:
   push:
-    branches-ignore: [main]
+    tags: [v*]
+  pull_request:
+    branches: [main]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
