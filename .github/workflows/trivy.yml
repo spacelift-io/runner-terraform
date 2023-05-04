@@ -16,7 +16,7 @@ jobs:
   build:
     strategy:
       matrix:
-        target: [aws, gcp]
+        target: [aws, gcp, azure]
         platform: [linux/amd64, linux/arm64]
     name: Analyze
     runs-on: ubuntu-latest
@@ -58,3 +58,4 @@ jobs:
         uses: github/codeql-action/upload-sarif@v2
         with:
           sarif_file: "trivy-results.sarif"
+
