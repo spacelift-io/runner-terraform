@@ -14,7 +14,7 @@ jobs:
   deployment:
     strategy:
       matrix:
-        target: [aws, gcp]
+        target: [aws, gcp, azure]
         platform: [linux/amd64, linux/arm64]
     name: Build the image
     runs-on: ubuntu-latest
@@ -39,3 +39,4 @@ jobs:
           set: |
             ${{ matrix.target }}.tags=runner-terraform:${{ github.sha }}
             ${{ matrix.target }}.platform=${{ matrix.platform }}
+

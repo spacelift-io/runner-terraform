@@ -53,3 +53,13 @@ RUN gcloud --version && \
     infracost --version
 
 USER spacelift
+
+FROM base AS azure
+
+RUN az --version && \
+    terragrunt --version && \
+    python --version && \
+    infracost --version
+
+USER spacelift
+

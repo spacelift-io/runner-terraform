@@ -10,11 +10,13 @@ with ECR.
 
 ## Images
 
-We publish two images. The default has `aws` CLI v2 included, the other has `gcloud`.
-This is because `gcloud` is a very large package and we want to keep the image size down.
+We publish three images. The default has `aws` CLI v2 included, the others
+`gcloud` and `az` respectively.
+This is because `gcloud` and `az` are very large packages and we want to keep the image size down.
 
 - `spacelift-io/runner-terraform:latest` -> with `aws` CLI
 - `spacelift-io/runner-terraform:gcp-latest` -> with `gcloud` CLI
+- `spacelift-io/runner-terraform:azure-latest` -> with `az` CLI
 
 ## Branch Model
 
@@ -29,3 +31,4 @@ $ git push origin v1.1.0
 ```
 
 We also have a weekly cron job that re-runs the `main` branch just to have the latest package updates.
+
