@@ -26,47 +26,37 @@ jobs:
         uses: actions/checkout@main
         with:
           fetch-depth: 0
-  
+
       - name: Build and push latest image (w/ aws cli)
         uses: ./.github/workflows/publish
         with:
           bake_target: aws
-          aws_role_to_assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           git_tag: ${{ steps.latest-tag.outputs.tag }}
           publish_release: true
           release_title: ${{ steps.latest-tag.outputs.tag }}
           bake_set: |
-            aws.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:latest
-            aws.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:${{ steps.latest-tag.outputs.tag }}
-            aws.tags=ghcr.io/spacelift-io/runner-terraform:latest
-            aws.tags=ghcr.io/spacelift-io/runner-terraform:${{ steps.latest-tag.outputs.tag }}
+            aws.tags=ghcr.io/stabl-energy/spacelift-runner-cdktf:latest
+            aws.tags=ghcr.io/stabl-energy/spacelift-runner-cdktf:${{ steps.latest-tag.outputs.tag }}
 
       - name: Build and push latest image (w/ gcloud cli)
         uses: ./.github/workflows/publish
         with:
           bake_target: gcp
-          aws_role_to_assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           git_tag: ${{ steps.latest-tag.outputs.tag }}
           publish_release: false
           bake_set: |
-            gcp.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:gcp-latest
-            gcp.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:gcp-${{ steps.latest-tag.outputs.tag }}
-            gcp.tags=ghcr.io/spacelift-io/runner-terraform:gcp-latest
-            gcp.tags=ghcr.io/spacelift-io/runner-terraform:gcp-${{ steps.latest-tag.outputs.tag }}
+            gcp.tags=ghcr.io/stabl-energy/spacelift-runner-cdktf:gcp-latest
+            gcp.tags=ghcr.io/stabl-energy/spacelift-runner-cdktf:gcp-${{ steps.latest-tag.outputs.tag }}
 
       - name: Build and push latest image (w/ az cli)
         uses: ./.github/workflows/publish
         with:
-          bake_target: azure 
-          aws_role_to_assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          bake_target: azure
           github_token: ${{ secrets.GITHUB_TOKEN }}
           git_tag: ${{ steps.latest-tag.outputs.tag }}
           publish_release: false
           bake_set: |
-            azure.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:azure-latest
-            azure.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:azure-${{ steps.latest-tag.outputs.tag }}
-            azure.tags=ghcr.io/spacelift-io/runner-terraform:azure-latest
-            azure.tags=ghcr.io/spacelift-io/runner-terraform:azure-${{ steps.latest-tag.outputs.tag }}
-
+            azure.tags=ghcr.io/stabl-energy/spacelift-runner-cdktf:azure-latest
+            azure.tags=ghcr.io/stabl-energy/spacelift-runner-cdktf:azure-${{ steps.latest-tag.outputs.tag }}

@@ -29,32 +29,25 @@ jobs:
         uses: ./.github/workflows/publish
         with:
           bake_target: aws
-          aws_role_to_assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_release: false
           bake_set: |
-            aws.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:future
-            aws.tags=ghcr.io/spacelift-io/runner-terraform:future
+            aws.tags=ghcr.io/stabl-energy/spacelift-runner-cdktf:future
 
       - name: Build and push future image (w/ gcloud cli)
         uses: ./.github/workflows/publish
         with:
           bake_target: gcp
-          aws_role_to_assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_release: false
           bake_set: |
-            gcp.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:gcp-future
-            gcp.tags=ghcr.io/spacelift-io/runner-terraform:gcp-future
+            gcp.tags=ghcr.io/stabl-energy/spacelift-runner-cdktf:gcp-future
 
       - name: Build and push future image (w/ az cli)
         uses: ./.github/workflows/publish
         with:
           bake_target: azure
-          aws_role_to_assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_release: false
           bake_set: |
-            azure.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:azure-future
-            azure.tags=ghcr.io/spacelift-io/runner-terraform:azure-future
-
+            azure.tags=ghcr.io/stabl-energy/spacelift-runner-cdktf:azure-future

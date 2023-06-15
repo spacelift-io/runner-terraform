@@ -49,7 +49,6 @@ jobs:
         uses: ./.github/workflows/publish
         with:
           bake_target: aws
-          aws_role_to_assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           git_tag: ${{ steps.tag.outputs.TAG }}
           publish_release: true
@@ -60,53 +59,38 @@ jobs:
             The image is rebuilt to ensure that it is up to date with the latest security patches.
             ## Updated images
             ### Image with aws cli
-            - `${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:latest`
-            - `${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:${{ steps.tag.outputs.TAG }}`
-            - `ghcr.io/spacelift-io/runner-terraform:latest`
-            - `ghcr.io/spacelift-io/runner-terraform:${{ steps.tag.outputs.TAG }}`
+            - `ghcr.io/stabl-energy/spacelift-runner-cdktf:latest`
+            - `ghcr.io/stabl-energy/spacelift-runner-cdktf:${{ steps.tag.outputs.TAG }}`
 
             ### Image with gcloud cli
-            - `${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:gcp-latest`
-            - `${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:gcp-${{ steps.tag.outputs.TAG }}`
-            - `ghcr.io/spacelift-io/runner-terraform:gcp-latest`
-            - `ghcr.io/spacelift-io/runner-terraform:gcp-${{ steps.tag.outputs.TAG }}`
+            - `ghcr.io/stabl-energy/spacelift-runner-cdktf:gcp-latest`
+            - `ghcr.io/stabl-energy/spacelift-runner-cdktf:gcp-${{ steps.tag.outputs.TAG }}`
 
             ### Image with az cli
-            - `${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:azure-latest`
-            - `${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:azure-${{ steps.tag.outputs.TAG }}`
-            - `ghcr.io/spacelift-io/runner-terraform:azure-latest`
-            - `ghcr.io/spacelift-io/runner-terraform:azure-${{ steps.tag.outputs.TAG }}`
+            - `ghcr.io/stabl-energy/spacelift-runner-cdktf:azure-latest`
+            - `ghcr.io/stabl-energy/spacelift-runner-cdktf:azure-${{ steps.tag.outputs.TAG }}`
           bake_set: |
-            aws.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:latest
-            aws.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:${{ steps.tag.outputs.TAG }}
-            aws.tags=ghcr.io/spacelift-io/runner-terraform:latest
-            aws.tags=ghcr.io/spacelift-io/runner-terraform:${{ steps.tag.outputs.TAG }}
+            aws.tags=ghcr.io/stabl-energy/spacelift-runner-cdktf:latest
+            aws.tags=ghcr.io/stabl-energy/spacelift-runner-cdktf:${{ steps.tag.outputs.TAG }}
 
       - name: Build and push weekly image (w/ gcloud cli)
         uses: ./.github/workflows/publish
         with:
           bake_target: gcp
-          aws_role_to_assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           git_tag: ${{ steps.latest-tag.outputs.tag }}
           publish_release: false
           bake_set: |
-            gcp.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:gcp-latest
-            gcp.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:gcp-${{ steps.tag.outputs.TAG }}
-            gcp.tags=ghcr.io/spacelift-io/runner-terraform:gcp-latest
-            gcp.tags=ghcr.io/spacelift-io/runner-terraform:gcp-${{ steps.tag.outputs.TAG }}
+            gcp.tags=ghcr.io/stabl-energy/spacelift-runner-cdktf:gcp-latest
+            gcp.tags=ghcr.io/stabl-energy/spacelift-runner-cdktf:gcp-${{ steps.tag.outputs.TAG }}
 
       - name: Build and push weekly image (w/ az cli)
         uses: ./.github/workflows/publish
         with:
           bake_target: azure
-          aws_role_to_assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           git_tag: ${{ steps.latest-tag.outputs.tag }}
           publish_release: false
           bake_set: |
-            azure.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:azure-latest
-            azure.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:azure-${{ steps.tag.outputs.TAG }}
-            azure.tags=ghcr.io/spacelift-io/runner-terraform:azure-latest
-            azure.tags=ghcr.io/spacelift-io/runner-terraform:azure-${{ steps.tag.outputs.TAG }}
-
+            azure.tags=ghcr.io/stabl-energy/spacelift-runner-cdktf:azure-latest
+            azure.tags=ghcr.io/stabl-energy/spacelift-runner-cdktf:azure-${{ steps.tag.outputs.TAG }}

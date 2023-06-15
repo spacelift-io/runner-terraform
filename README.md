@@ -1,6 +1,6 @@
-# Terraform Runner Image
+# Spacelift CDK-TF Runner Image
 
-This repo contains the Dockerfile for building the default Spacelift Terraform runner image.
+This repo contains the Dockerfile for building our Spacelift CDK-TF runner image.
 
 ## Docker Repository
 
@@ -31,4 +31,3 @@ $ git push origin v1.1.0
 ```
 
 We also have a weekly cron job that re-runs the `main` branch just to have the latest package updates.
-
