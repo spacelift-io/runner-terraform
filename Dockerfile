@@ -12,12 +12,9 @@ RUN apk -U upgrade && apk add --no-cache \
     jq \
     openssh \
     openssh-keygen \
-    python3 \
     tzdata \
     nodejs \
     npm
-
-RUN [ -e /usr/bin/python ] || ln -s python3 /usr/bin/python
 
 # Download infracost
 ADD "https://github.com/infracost/infracost/releases/latest/download/infracost-linux-${TARGETARCH}.tar.gz" /tmp/infracost.tar.gz
@@ -29,8 +26,8 @@ RUN tar -xzf /tmp/infracost.tar.gz -C /bin && \
 # Install latest NPM version
 RUN npm install -g npm
 
-# Install CDK-TF
-RUN npm install -g cdktf-cli typescript
+# Install CDKTF CLI
+RUN npm install -g cdktf-cli
 
 RUN echo "hosts: files dns" > /etc/nsswitch.conf \
     && adduser --disabled-password --uid=1983 spacelift
@@ -41,7 +38,7 @@ COPY --from=ghcr.io/spacelift-io/aws-cli-alpine /usr/local/aws-cli/ /usr/local/a
 COPY --from=ghcr.io/spacelift-io/aws-cli-alpine /aws-cli-bin/ /usr/local/bin/
 
 RUN aws --version && \
-    python --version && \
+    cdktf --version && \
     infracost --version
 
 USER spacelift
@@ -51,7 +48,7 @@ FROM base AS gcp
 RUN gcloud components install gke-gcloud-auth-plugin
 
 RUN gcloud --version && \
-    python --version && \
+    cdktf --version && \
     infracost --version
 
 USER spacelift
@@ -59,7 +56,7 @@ USER spacelift
 FROM base AS azure
 
 RUN az --version && \
-    python --version && \
+    cdktf --version && \
     infracost --version
 
 USER spacelift
