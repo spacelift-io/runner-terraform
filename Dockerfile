@@ -14,7 +14,8 @@ RUN apk -U upgrade && apk add --no-cache \
     openssh-keygen \
     tzdata \
     nodejs \
-    npm
+    npm \
+    yarn
 
 # Download infracost
 ADD "https://github.com/infracost/infracost/releases/latest/download/infracost-linux-${TARGETARCH}.tar.gz" /tmp/infracost.tar.gz
