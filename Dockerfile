@@ -17,6 +17,9 @@ RUN apk -U upgrade && apk add --no-cache \
     npm \
     yarn
 
+# Install CDKTF CLI
+RUN yarn global add cdktf-cli
+
 # Download infracost
 ADD "https://github.com/infracost/infracost/releases/latest/download/infracost-linux-${TARGETARCH}.tar.gz" /tmp/infracost.tar.gz
 RUN tar -xzf /tmp/infracost.tar.gz -C /bin && \
