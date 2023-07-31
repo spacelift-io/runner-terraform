@@ -63,36 +63,6 @@ jobs:
             ### Image with aws cli
             - `ghcr.io/stabl-energy/spacelift-runner-cdktf:latest`
             - `ghcr.io/stabl-energy/spacelift-runner-cdktf:${{ steps.tag.outputs.TAG }}`
-
-            ### Image with gcloud cli
-            - `ghcr.io/stabl-energy/spacelift-runner-cdktf:gcp-latest`
-            - `ghcr.io/stabl-energy/spacelift-runner-cdktf:gcp-${{ steps.tag.outputs.TAG }}`
-
-            ### Image with az cli
-            - `ghcr.io/stabl-energy/spacelift-runner-cdktf:azure-latest`
-            - `ghcr.io/stabl-energy/spacelift-runner-cdktf:azure-${{ steps.tag.outputs.TAG }}`
           bake_set: |
             aws.tags=ghcr.io/stabl-energy/spacelift-runner-cdktf:latest
             aws.tags=ghcr.io/stabl-energy/spacelift-runner-cdktf:${{ steps.tag.outputs.TAG }}
-
-      - name: Build and push weekly image (w/ gcloud cli)
-        uses: ./.github/workflows/publish
-        with:
-          bake_target: gcp
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          git_tag: ${{ steps.latest-tag.outputs.tag }}
-          publish_release: false
-          bake_set: |
-            gcp.tags=ghcr.io/stabl-energy/spacelift-runner-cdktf:gcp-latest
-            gcp.tags=ghcr.io/stabl-energy/spacelift-runner-cdktf:gcp-${{ steps.tag.outputs.TAG }}
-
-      - name: Build and push weekly image (w/ az cli)
-        uses: ./.github/workflows/publish
-        with:
-          bake_target: azure
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          git_tag: ${{ steps.latest-tag.outputs.tag }}
-          publish_release: false
-          bake_set: |
-            azure.tags=ghcr.io/stabl-energy/spacelift-runner-cdktf:azure-latest
-            azure.tags=ghcr.io/stabl-energy/spacelift-runner-cdktf:azure-${{ steps.tag.outputs.TAG }}

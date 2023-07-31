@@ -15,8 +15,8 @@ We publish three images. The default has `aws` CLI v2 included, the others
 This is because `gcloud` and `az` are very large packages and we want to keep the image size down.
 
 - `spacelift-io/runner-terraform:latest` -> with `aws` CLI
-- `spacelift-io/runner-terraform:gcp-latest` -> with `gcloud` CLI
-- `spacelift-io/runner-terraform:azure-latest` -> with `az` CLI
+- `spacelift-io/runner-terraform:gcp-latest` -> with `gcloud` CLI [currently disabled]
+- `spacelift-io/runner-terraform:azure-latest` -> with `az` CLI [currently disabled]
 
 ## Branch Model
 

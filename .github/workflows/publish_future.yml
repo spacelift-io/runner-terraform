@@ -33,21 +33,3 @@ jobs:
           publish_release: false
           bake_set: |
             aws.tags=ghcr.io/stabl-energy/spacelift-runner-cdktf:future
-
-      - name: Build and push future image (w/ gcloud cli)
-        uses: ./.github/workflows/publish
-        with:
-          bake_target: gcp
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_release: false
-          bake_set: |
-            gcp.tags=ghcr.io/stabl-energy/spacelift-runner-cdktf:gcp-future
-
-      - name: Build and push future image (w/ az cli)
-        uses: ./.github/workflows/publish
-        with:
-          bake_target: azure
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_release: false
-          bake_set: |
-            azure.tags=ghcr.io/stabl-energy/spacelift-runner-cdktf:azure-future
