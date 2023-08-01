@@ -41,10 +41,8 @@ jobs:
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
-          if ! git rev-parse $TAG >/dev/null 2>&1; then
-            git tag -a $TAG -m "Weekly rebuild of ${{ steps.latest-tag.outputs.tag }}"
-            git push origin $TAG
-          fi
+          git tag -a $TAG -m "Weekly rebuild of ${{ steps.latest-tag.outputs.tag }}"
+          git push origin $TAG
           echo "TAG=$TAG" >> $GITHUB_OUTPUT
 
       - name: Build and push weekly image (w/ aws cli)
