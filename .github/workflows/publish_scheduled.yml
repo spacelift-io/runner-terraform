@@ -27,6 +27,7 @@ jobs:
         with:
           ref: ${{ steps.latest-tag.outputs.tag }}
           fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set current date as env variable
         run: echo "TODAY=$(date +'%Y%m%d')" >> $GITHUB_ENV
