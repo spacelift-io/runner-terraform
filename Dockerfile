@@ -42,10 +42,10 @@ RUN tar -xzf /tmp/infracost.tar.gz -C /bin && \
     rm /tmp/infracost.tar.gz
 
 # Install tfsec
-ADD "https://github.com/tfsec/tfsec/releases/latest/download/tfsec-linux-amd64" /usr/local/bin/tfsec
+ADD "https://github.com/tfsec/tfsec/releases/latest/download/tfsec-linux-${TARGETARCH}" /usr/local/bin/tfsec
 RUN chmod 755 /usr/local/bin/tfsec
 
-# Install Checkov
+# Install checkov
 RUN pip3 install --upgrade pip && \
     pip3 install packaging==21.3.0 && \
     pip3 install checkov
