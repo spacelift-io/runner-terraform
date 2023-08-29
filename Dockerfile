@@ -53,6 +53,15 @@ RUN pip3 install --upgrade pip && \
 # Install Prettier
 RUN yarn global add prettier
 
+# Install regula
+RUN REGULA_LATEST_VERSION=$(curl -s https://api.github.com/repos/fugue/regula/releases/latest | grep "tag_name" | cut -d'v' -f2 | cut -d'"' -f1) && \
+    curl -L https://github.com/fugue/regula/releases/download/v${REGULA_LATEST_VERSION}/regula_${REGULA_LATEST_VERSION}_Linux_x86_64.tar.gz --output /tmp/regula.tar.gz && \
+    tar -xzf /tmp/regula.tar.gz -C /bin && \
+    mv "/bin/regula" /usr/local/bin/regula && \
+    chmod 755 /usr/local/bin/regula && \
+    rm /tmp/regula.tar.gz
+
+
 FROM base AS aws
 
 COPY --from=ghcr.io/spacelift-io/aws-cli-alpine /usr/local/aws-cli/ /usr/local/aws-cli/
