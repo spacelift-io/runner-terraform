@@ -72,7 +72,8 @@ RUN aws --version && \
     infracost --version && \
     tfsec --version && \
     checkov --version && \
-    prettier --version
+    prettier --version && \
+    regula version
 
 USER spacelift
 
@@ -85,7 +86,8 @@ RUN gcloud --version && \
     infracost --version && \
     tfsec --version && \
     checkov --version && \
-    prettier --version
+    prettier --version && \
+    regula version
 
 USER spacelift
 
@@ -96,6 +98,7 @@ RUN az --version && \
     infracost --version && \
     tfsec --version && \
     checkov --version && \
-    prettier --version
+    prettier --version && \
+    regula version
 
 USER spacelift
