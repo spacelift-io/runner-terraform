@@ -15,6 +15,7 @@ RUN apk -U upgrade && apk add --no-cache \
     curl \
     git \
     jq \
+    xz \
     openssh \
     openssh-keygen \
     tzdata \
