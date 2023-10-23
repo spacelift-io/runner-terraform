@@ -49,7 +49,7 @@ RUN chmod 755 /usr/local/bin/tfsec
 # Install checkov
 RUN pip3 install --upgrade pip && \
     pip3 install packaging==21.3.0 && \
-    pip3 install checkov
+    pip3 install checkov --config-settings=setup-args="-Dallow-noblas=true"
 
 # Install Prettier
 RUN yarn global add prettier
