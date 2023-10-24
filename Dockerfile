@@ -1,3 +1,4 @@
+# hadolint ignore=DL3006
 ARG BASE_IMAGE=alpine:3.18
 
 FROM ${BASE_IMAGE} as base
@@ -9,6 +10,7 @@ SHELL ["/bin/ash", "-o", "pipefail", "-o", "errexit", "-o", "nounset", "-o"]
 RUN echo "hosts: files dns" > /etc/nsswitch.conf \
     && adduser --disabled-password --uid=1983 spacelift
 
+# hadolint ignore=DL3018
 RUN apk -U upgrade && apk add --no-cache \
     build-base \
     libffi-dev \
@@ -31,7 +33,6 @@ RUN apk -U upgrade && apk add --no-cache \
     python3-dev \
     py3-pip
 
-
 # Install latest NPM version, cdktf and prettier
 RUN npm install -g npm@latest && \
     yarn global add cdktf-cli@latest prettier@latest
@@ -44,6 +45,7 @@ RUN tar -xzf /tmp/infracost.tar.gz -C /bin && \
     rm /tmp/infracost.tar.gz
 
 # Install checkov
+# hadolint ignore=DL3013
 RUN pip3 install --upgrade pip --no-cache-dir && \
     pip3 install packaging==21.3.0 --no-cache-dir && \
     pip3 install checkov==2.5.19 --config-settings=setup-args="-Dallow-noblas=true" --no-cache-dir
