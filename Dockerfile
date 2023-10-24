@@ -5,7 +5,7 @@ FROM ${BASE_IMAGE} as base
 
 ARG TARGETARCH
 
-SHELL ["/bin/ash", "-o", "pipefail", "-o", "errexit", "-o", "nounset", "-o"]
+SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 
 RUN echo "hosts: files dns" > /etc/nsswitch.conf \
     && adduser --disabled-password --uid=1983 spacelift
