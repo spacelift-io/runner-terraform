@@ -1,6 +1,6 @@
-# hadolint ignore=DL3006
 ARG BASE_IMAGE=alpine:3.18
 
+# hadolint ignore=DL3006
 FROM ${BASE_IMAGE} as base
 
 ARG TARGETARCH
