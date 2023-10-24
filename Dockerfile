@@ -1,8 +1,11 @@
 ARG BASE_IMAGE=alpine:3.18
 
-FROM ${BASE_IMAGE} AS base
+FROM ${BASE_IMAGE}
 
 ARG TARGETARCH
+
+RUN echo "hosts: files dns" > /etc/nsswitch.conf \
+    && adduser --disabled-password --uid=1983 spacelift
 
 RUN apk -U upgrade && apk add --no-cache \
     build-base \
@@ -26,14 +29,9 @@ RUN apk -U upgrade && apk add --no-cache \
     python3-dev \
     py3-pip
 
-# Install latest NPM version
-RUN npm install -g npm
-
-# Install CDKTF CLI
-RUN yarn global add cdktf-cli
-
-RUN echo "hosts: files dns" > /etc/nsswitch.conf \
-    && adduser --disabled-password --uid=1983 spacelift
+# Install latest NPM version, cdktf and prettier
+RUN npm install -g npm@latest && \
+    yarn global add cdktf-cli@latest prettier@latest
 
 # Download infracost
 ADD "https://github.com/infracost/infracost/releases/latest/download/infracost-linux-${TARGETARCH}.tar.gz" /tmp/infracost.tar.gz
@@ -42,17 +40,10 @@ RUN tar -xzf /tmp/infracost.tar.gz -C /bin && \
     chmod 755 /usr/local/bin/infracost && \
     rm /tmp/infracost.tar.gz
 
-# Install tfsec
-ADD "https://github.com/tfsec/tfsec/releases/latest/download/tfsec-linux-${TARGETARCH}" /usr/local/bin/tfsec
-RUN chmod 755 /usr/local/bin/tfsec
-
 # Install checkov
 RUN pip3 install --upgrade pip && \
     pip3 install packaging==21.3.0 && \
-    pip3 install checkov --config-settings=setup-args="-Dallow-noblas=true"
-
-# Install Prettier
-RUN yarn global add prettier
+    pip3 install checkov==2.5.19 --config-settings=setup-args="-Dallow-noblas=true"
 
 # Install regula
 RUN REGULA_LATEST_VERSION=$(curl -s https://api.github.com/repos/fugue/regula/releases/latest | grep "tag_name" | cut -d'v' -f2 | cut -d'"' -f1) && \
@@ -62,44 +53,17 @@ RUN REGULA_LATEST_VERSION=$(curl -s https://api.github.com/repos/fugue/regula/re
     chmod 755 /usr/local/bin/regula && \
     rm /tmp/regula.tar.gz
 
-
-FROM base AS aws
-
+# Copy AWS CLI binaries (from ghcr.io/spacelift-io/aws-cli-alpine)
 COPY --from=ghcr.io/spacelift-io/aws-cli-alpine /usr/local/aws-cli/ /usr/local/aws-cli/
 COPY --from=ghcr.io/spacelift-io/aws-cli-alpine /aws-cli-bin/ /usr/local/bin/
 
-RUN aws --version && \
-    cdktf --version && \
-    infracost --version && \
-    tfsec --version && \
-    checkov --version && \
-    prettier --version && \
-    regula version
-
-USER spacelift
-
-FROM base AS gcp
-
-RUN gcloud components install gke-gcloud-auth-plugin
-
-RUN gcloud --version && \
-    cdktf --version && \
-    infracost --version && \
-    tfsec --version && \
-    checkov --version && \
-    prettier --version && \
-    regula version
-
-USER spacelift
-
-FROM base AS azure
-
-RUN az --version && \
-    cdktf --version && \
-    infracost --version && \
-    tfsec --version && \
-    checkov --version && \
-    prettier --version && \
-    regula version
+# Check versions
+RUN echo "Software installed:"; \
+    aws --version; \
+    echo "CDKTF v$(cdktf --version)"; \
+    infracost --version; \
+    echo "Checkov v$(checkov --version)"; \
+    echo "Prettier v$(prettier --version)"; \
+    echo "Regula $(regula version)"
 
 USER spacelift

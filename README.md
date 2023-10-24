@@ -1,22 +1,10 @@
-# Spacelift CDK-TF Runner Image
+# Spacelift CDKTF AWS Runner Image
 
-This repo contains the Dockerfile for building our Spacelift CDK-TF runner image.
+This repo contains the Dockerfile for building our Spacelift CDKTF AWS runner image, which contains all the necessary tools for our Spacelift pipeline.
 
 ## Docker Repository
 
-The image is pushed to the `public.ecr.aws/spacelift/runner-terraform` public repository. It
-is also pushed to the `ghcr.io/spacelift-io/runner-terraform` as a backup in case of issues
-with ECR.
-
-## Images
-
-We publish three images. The default has `aws` CLI v2 included, the others
-`gcloud` and `az` respectively.
-This is because `gcloud` and `az` are very large packages and we want to keep the image size down.
-
-- `spacelift-io/runner-terraform:latest` -> with `aws` CLI
-- `spacelift-io/runner-terraform:gcp-latest` -> with `gcloud` CLI [currently disabled]
-- `spacelift-io/runner-terraform:azure-latest` -> with `az` CLI [currently disabled]
+The image is pushed to the `ghcr.io/stabl-energy/spacelift-runner-cdktf` public repository.
 
 ## Branch Model
 
