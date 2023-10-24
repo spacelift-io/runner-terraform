@@ -27,10 +27,14 @@ RUN apk -U upgrade && apk add --no-cache \
     nodejs=18.18.2-r0 \
     npm=9.6.6-r0 \
     yarn=1.22.19-r0 \
-    openblas-dev=0.3.23-r0 \
+    openblas=0.3.23-r0 \
     python3=3.11.6-r0 \
     python3-dev=3.11.6-r0 \
-    py3-pip=23.1.2-r0
+    py3-pip=23.1.2-r0 \
+    py3-numpy=1.24.4-r0 \
+    rust=1.71.1-r0 \
+    cargo=1.71.1-r0
+
 
 # Install latest NPM version, cdktf and prettier
 RUN npm install -g npm@latest && \
@@ -47,7 +51,7 @@ RUN tar -xzf /tmp/infracost.tar.gz -C /bin && \
 # hadolint ignore=DL3013
 RUN pip3 install --upgrade pip --no-cache-dir && \
     pip3 install packaging==21.3.0 --no-cache-dir && \
-    pip3 install checkov==2.5.19 --no-cache-dir
+    pip3 install checkov==3.0.1 --config-settings=setup-args="-Dallow-noblas=true" --no-cache-dir
 
 # Install regula
 RUN REGULA_LATEST_VERSION=$(curl -s https://api.github.com/repos/fugue/regula/releases/latest | grep "tag_name" | cut -d'v' -f2 | cut -d'"' -f1) && \
