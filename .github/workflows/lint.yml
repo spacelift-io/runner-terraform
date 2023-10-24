@@ -1,4 +1,4 @@
-name: Docker file linter
+name: Lint Dockerfile
 
 on:
   push:
