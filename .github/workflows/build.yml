@@ -66,6 +66,8 @@ jobs:
           push: ${{ github.event_name != 'schedule' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
   release:
     name: Create and upload release
