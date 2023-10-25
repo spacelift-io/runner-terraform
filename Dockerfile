@@ -61,7 +61,6 @@ RUN echo "Software installed:"; \
     aws --version; \
     echo "CDKTF v$(cdktf --version)"; \
     infracost --version; \
-    echo "Checkov v$(checkov --version)"; \
     echo "Prettier v$(prettier --version)"; \
     echo "Regula $(regula version)"
 
