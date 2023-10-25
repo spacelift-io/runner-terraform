@@ -13,6 +13,7 @@ RUN echo "hosts: files dns" > /etc/nsswitch.conf \
 # hadolint ignore=DL3018
 RUN apk -U upgrade && apk add --no-cache \
     build-base=0.5-r3 \
+    bash=5.2.15-r5 \
     gcc=12.2.1_git20220924-r10 \
     musl-dev=1.2.4-r2 \
     libffi-dev=3.4.4-r2 \
