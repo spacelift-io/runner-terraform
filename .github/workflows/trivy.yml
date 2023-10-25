@@ -8,42 +8,46 @@ on:
   schedule:
     - cron: "19 7 * * 0"
 
+env:
+  IMAGE_TAG: spacelift-runner:${{ github.sha }}
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
+
+permissions:
+  actions: read
+  contents: read
+  security-events: write
 
 jobs:
   build:
     strategy:
       matrix:
-        target: [aws]
         platform: [linux/amd64, linux/arm64]
     name: Analyze
     runs-on: ubuntu-latest
-    env:
-      IMAGE_TAG: spacelift-${{ matrix.target }}:${{ github.sha }}
-
     steps:
       - name: Checkout code
         uses: actions/checkout@main
 
       - name: Set up QEMU
         if: matrix.platform == 'linux/arm64'
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
         with:
           platforms: linux/arm64
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
 
-      - name: Bake the image
-        uses: docker/bake-action@v2
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
         with:
-          targets: ${{ matrix.target }}
+          context: .
+          platforms: ${{ matrix.platform }}
+          push: false
+          tags: ${{ env.IMAGE_TAG }}
           load: true
-          set: |
-            ${{ matrix.target }}.tags=${{ env.IMAGE_TAG }}
-            ${{ matrix.target }}.platform=${{ matrix.platform }}
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
