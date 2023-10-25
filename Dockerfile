@@ -29,20 +29,6 @@ RUN apk -U upgrade && apk add --no-cache \
     npm=9.6.6-r0 \
     yarn=1.22.19-r0
 
-
-# Install Bun
-RUN if [ "${TARGETARCH}" = "amd64" ]; then \
-        ARCH="x64-baseline"; \
-    elif [ "${TARGETARCH}" = "arm64" ]; then \
-        ARCH="aarch64"; \
-    fi && \
-    wget "https://github.com/oven-sh/bun/releases/latest/download/bun-linux-${ARCH}.zip" -O /tmp/bun.zip && \
-    unzip -j /tmp/bun.zip -d /bin && \
-    chmod 755 /bin/bun && \
-    rm /tmp/bun.zip
-
-SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
-
 # Download infracost
 ADD "https://github.com/infracost/infracost/releases/latest/download/infracost-linux-${TARGETARCH}.tar.gz" /tmp/infracost.tar.gz
 RUN tar -xzf /tmp/infracost.tar.gz -C /bin && \
@@ -57,6 +43,17 @@ RUN REGULA_LATEST_VERSION=$(curl -s https://api.github.com/repos/fugue/regula/re
     mv "/bin/regula" /usr/local/bin/regula && \
     chmod 755 /usr/local/bin/regula && \
     rm /tmp/regula.tar.gz
+
+# Install Bun
+RUN if [ "${TARGETARCH}" = "amd64" ]; then \
+        ARCH="x64-baseline"; \
+    elif [ "${TARGETARCH}" = "arm64" ]; then \
+        ARCH="aarch64"; \
+    fi && \
+    wget "https://github.com/oven-sh/bun/releases/latest/download/bun-linux-${ARCH}.zip" -O /tmp/bun.zip && \
+    unzip -j /tmp/bun.zip -d /bin && \
+    chmod 755 /bin/bun && \
+    rm /tmp/bun.zip
     
 # Install CDKTF CLI
 RUN /bin/bun add -g cdktf-cli
