@@ -10,8 +10,6 @@ on:
     types:
       - "opened"
       - "synchronize"
-  schedule:
-    - cron: "19 7 * * 0"
 
 env:
   REGISTRY: "ghcr.io"
