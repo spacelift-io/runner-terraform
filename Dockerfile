@@ -12,22 +12,22 @@ RUN echo "hosts: files dns" > /etc/nsswitch.conf \
 
 # hadolint ignore=DL3018
 RUN apk -U upgrade && apk add --no-cache \
-    build-base=0.5-r3 \
-    bash=5.2.15-r5 \
-    gcc=12.2.1_git20220924-r10 \
-    musl-dev=1.2.4-r2 \
-    libffi-dev=3.4.4-r2 \
-    ca-certificates=20230506-r0 \
-    curl=8.4.0-r0 \
-    git=2.40.1-r0 \
-    jq=1.6-r3 \
-    xz=5.4.3-r0 \
-    openssh=9.3_p2-r0 \
-    openssh-keygen=9.3_p2-r0 \
-    tzdata=2023c-r1 \
-    nodejs=18.18.2-r0 \
-    npm=9.6.6-r0 \
-    yarn=1.22.19-r0
+    build-base \
+    bash \
+    gcc \
+    musl-dev \
+    libffi-dev \
+    ca-certificates \
+    curl \
+    git \
+    jq \
+    xz \
+    openssh \
+    openssh-keygen \
+    tzdata \
+    nodejs \
+    npm \
+    yarn
 
 # Install latest NPM version, cdktf and prettier
 RUN npm install -g npm@latest && \
