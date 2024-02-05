@@ -45,10 +45,7 @@ USER spacelift
 
 FROM base AS gcp
 
-RUN gcloud components install gke-gcloud-auth-plugin
-
-RUN gcloud components install kubectl
-
+RUN gcloud components install gke-gcloud-auth-plugin kubectl
 RUN gcloud --version && \
     terragrunt --version && \
     python --version && \
