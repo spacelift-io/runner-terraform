@@ -15,12 +15,6 @@ jobs:
       packages: write
 
     steps:
-      - name: Checkout publish workflow
-        uses: actions/checkout@main
-        with:
-          sparse-checkout: .github/workflows/publish/action.yml
-          sparse-checkout-cone-mode: false
-
       - name: Checkout repository code
         uses: actions/checkout@main
         with:
