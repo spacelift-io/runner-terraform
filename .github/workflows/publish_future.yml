@@ -16,9 +16,10 @@ jobs:
 
     steps:
       - name: Checkout publish workflow
-        uses: Bhacaz/checkout-files@v2
+        uses: actions/checkout@main
         with:
-          files: .github/workflows/publish/action.yml
+          sparse-checkout: .github/workflows/publish/action.yml
+          sparse-checkout-cone-mode: false
 
       - name: Checkout repository code
         uses: actions/checkout@main
