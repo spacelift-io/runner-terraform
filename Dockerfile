@@ -54,7 +54,7 @@ RUN if [ "${TARGETARCH}" = "amd64" ]; then \
     elif [ "${TARGETARCH}" = "arm64" ]; then \
         ARCH="aarch64"; \
     fi && \
-    wget "https://github.com/oven-sh/bun/releases/latest/download/bun-linux-${ARCH}.zip" -O /tmp/bun.zip && \
+    curl -L "https://github.com/oven-sh/bun/releases/latest/download/bun-linux-${ARCH}.zip" --output /tmp/bun.zip && \
     unzip -j /tmp/bun.zip -d /bin && \
     chmod 755 /bin/bun && \
     rm /tmp/bun.zip
@@ -76,5 +76,3 @@ RUN echo "Software installed:"; \
     echo "Regula $(regula version)"
 
 USER spacelift
-
-
