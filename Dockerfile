@@ -29,6 +29,10 @@ RUN apk -U upgrade && apk add --no-cache \
     npm \
     yarn
 
+# Install latest NPM version, cdktf and prettier
+RUN npm install -g npm@latest && \
+    yarn global add cdktf-cli@latest prettier@latest
+
 # Download infracost
 ADD "https://github.com/infracost/infracost/releases/latest/download/infracost-linux-${TARGETARCH}.tar.gz" /tmp/infracost.tar.gz
 RUN tar -xzf /tmp/infracost.tar.gz -C /bin && \
@@ -54,12 +58,6 @@ RUN if [ "${TARGETARCH}" = "amd64" ]; then \
     unzip -j /tmp/bun.zip -d /bin && \
     chmod 755 /bin/bun && \
     rm /tmp/bun.zip
-    
-# Install CDKTF CLI
-RUN /bin/bun add -g cdktf-cli
-
-# Install Prettier
-RUN /bin/bun add -g prettier
 
 FROM ghcr.io/spacelift-io/aws-cli-alpine:2.13.28 AS aws-cli
 
