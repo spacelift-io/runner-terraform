@@ -17,6 +17,23 @@ RUN apk -U upgrade && apk add --no-cache \
 
 RUN [ -e /usr/bin/python ] || ln -s python3 /usr/bin/python
 
+# Download checkov
+RUN apk update && apk add --no-cache python3-dev gcc py3-pip rust cargo libffi-dev
+RUN pip3 install --upgrade --break-system-packages pip && \
+    pip3 install --break-system-packages --upgrade setuptools && \
+    pip3 install --break-system-packages checkov
+
+# Download tfsec
+RUN wget -O tfsec https://github.com/aquasecurity/tfsec/releases/download/v1.28.1/tfsec-linux-amd64 && \
+    chmod +x tfsec && \
+    mv tfsec /usr/local/bin/
+
+# Download terrascan
+RUN wget -O terrascan.tar.gz https://github.com/tenable/terrascan/releases/download/v1.17.1/terrascan_1.17.1_Linux_x86_64.tar.gz && \
+    tar -xvf terrascan.tar.gz && \
+    chmod +x terrascan && \
+    mv terrascan /usr/local/bin/
+
 # Download infracost
 ADD "https://github.com/infracost/infracost/releases/latest/download/infracost-linux-${TARGETARCH}.tar.gz" /tmp/infracost.tar.gz
 RUN tar -xzf /tmp/infracost.tar.gz -C /bin && \
