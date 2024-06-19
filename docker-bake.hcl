@@ -1,7 +1,7 @@
 target "aws" {
     target = "aws"
     platforms = ["linux/amd64", "linux/arm64"]
-    args = {"BASE_IMAGE": "alpine:3.19"}
+    args = {"BASE_IMAGE": "alpine:3.20"}
 }
 
 target "gcp" {
