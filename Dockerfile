@@ -10,7 +10,7 @@ RUN apk -U upgrade && apk add --no-cache \
     curl \
     git \
     jq \
-    openssh \
+    openssh-client \
     openssh-keygen \
     python3 \
     tzdata
