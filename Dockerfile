@@ -10,6 +10,7 @@ RUN apk -U upgrade && apk add --no-cache \
     curl \
     git \
     jq \
+    mise \
     openssh-client \
     openssh-keygen \
     python3 \
