@@ -65,7 +65,6 @@ RUN pip install --no-cache-dir azure-cli
 
 FROM base AS azure
 
-ENV VIRTUAL_ENV=/opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 COPY --from=azure-build /opt/venv /opt/venv
