@@ -56,6 +56,9 @@ USER spacelift
 
 FROM base AS azure
 
+RUN apk add --no-cache py3-pip gcc musl-dev python3-dev libffi-dev openssl-dev cargo make
+RUN pip install --break-system-packages azure-cli
+
 RUN az --version && \
     terragrunt --version && \
     python --version && \
