@@ -13,5 +13,5 @@ target "gcp" {
 target "azure" {
     target = "azure"
     platforms = ["linux/amd64", "linux/arm64"]
-    args = {"BASE_IMAGE": "mcr.microsoft.com/azure-cli:2.63.0"}
+    args = {"BASE_IMAGE": "alpine:3.20"}
 }
