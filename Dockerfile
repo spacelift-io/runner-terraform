@@ -54,12 +54,25 @@ RUN gcloud --version && \
 
 USER spacelift
 
+FROM base AS azure-build
+
+RUN apk add --no-cache py3-pip gcc musl-dev python3-dev libffi-dev openssl-dev cargo make
+
+RUN python3 -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+RUN pip install --no-cache-dir azure-cli
+
 FROM base AS azure
 
-RUN az --version && \
+ENV PATH="/opt/venv/bin:$PATH"
+
+COPY --from=azure-build /opt/venv /opt/venv
+
+RUN apk add --no-cache py3-pip && \
+    az --version && \
     terragrunt --version && \
     python --version && \
     infracost --version
 
 USER spacelift
-
