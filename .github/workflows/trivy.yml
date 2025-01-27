@@ -37,7 +37,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Bake the image
-        uses: docker/bake-action@v4
+        uses: docker/bake-action@v6
         with:
           targets: ${{ matrix.target }}
           load: true
