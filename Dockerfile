@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=alpine:3.18
+ARG BASE_IMAGE=alpine:3.21
 
 # hadolint ignore=DL3006
 FROM ${BASE_IMAGE} AS common
@@ -34,7 +34,10 @@ RUN apk -U upgrade && apk add --no-cache \
     bash \
     nodejs \
     npm \
-    yarn
+    yarn \
+    python3
+
+RUN [ -e /usr/bin/python ] || ln -s python3 /usr/bin/python
 
 # Install latest NPM version, cdktf and prettier
 # Note: Remove later or install with bun (also rm npm & yarn)
@@ -140,7 +143,8 @@ RUN apk --no-cache add \
     esac
 
 
-FROM ghcr.io/spacelift-io/aws-cli-alpine:2.13.28 AS aws-cli
+# hadolint ignore=DL3007
+FROM ghcr.io/spacelift-io/aws-cli-alpine:latest AS aws-cli
 
 FROM base
 
