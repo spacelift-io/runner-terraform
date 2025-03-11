@@ -32,9 +32,10 @@ jobs:
       - name: Bake the ${{ matrix.target }} image 
         uses: docker/bake-action@v6
         with:
-          targets: ${{ matrix.target }}
+          targets: ${{ matrix.target }},${{ matrix.target }}-fips
           load: true
           set: |
             ${{ matrix.target }}.tags=runner-terraform:${{ github.sha }}
             ${{ matrix.target }}.platform=${{ matrix.platform }}
-
+            ${{ matrix.target }}-fips.tags=runner-terraform:${{ github.sha }}-fips
+            ${{ matrix.target }}-fips.platform=${{ matrix.platform }}

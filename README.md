@@ -18,6 +18,15 @@ This is because `gcloud` and `az` are very large packages and we want to keep th
 - `spacelift-io/runner-terraform:gcp-latest` -> with `gcloud` CLI
 - `spacelift-io/runner-terraform:azure-latest` -> with `az` CLI
 
+### FIPS
+
+All the tags have a `-fips` variant that has been installed with the latest FIPS compliant OpenSSL (3.1.2 at the time of writing).
+You are still responsible to run these images on a FIPS hardened host ensuring youre only communicating with FIPS enabled endpoints.
+
+- `spacelift-io/runner-terraform:latest-fips` -> with `aws` CLI & FIPS OpenSSL
+- `spacelift-io/runner-terraform:gcp-latest-fips` -> with `gcloud` CLI & FIPS OpenSSL
+- `spacelift-io/runner-terraform:azure-latest-fips` -> with `az` CLI & FIPS OpenSSL
+
 ## Branch Model
 
 All changes merged to `main` branch are automatically built and pushed to the Docker repository with the `future` tag.
