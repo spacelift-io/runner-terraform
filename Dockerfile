@@ -4,6 +4,15 @@ FROM ${BASE_IMAGE} AS base
 
 ARG TARGETARCH
 
+# OpenSSL Configuration
+# 3.0.9 is the latest fips validated version (scroll down): https://openssl-library.org/source/
+ARG OPENSSL_VERSION=3.0.9
+ARG OPENSSL_HASH=eb1ab04781474360f77c318ab89d8c5a03abc38e63d65a603cabbf1b00a1dc90
+ARG OPENSSL_FIPS=0
+ENV OPENSSL_FIPS=${OPENSSL_FIPS}
+
+COPY scripts/* /build/
+
 RUN apk -U upgrade && apk add --no-cache \
     bash \
     ca-certificates \
@@ -13,8 +22,10 @@ RUN apk -U upgrade && apk add --no-cache \
     openssh-client \
     openssh-keygen \
     python3 \
-    tzdata
+    tzdata && \
+    /build/alpine-fips.sh
 
+COPY openssl.cnf /etc/ssl/openssl.cnf
 RUN [ -e /usr/bin/python ] || ln -s python3 /usr/bin/python
 
 # Download infracost
