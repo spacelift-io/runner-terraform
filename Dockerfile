@@ -73,6 +73,6 @@ RUN apk add --no-cache py3-pip && \
     az --version && \
     terragrunt --version && \
     python --version && \
-    infracost --version
+    infracost --version && echo 'test'
 
 USER spacelift
