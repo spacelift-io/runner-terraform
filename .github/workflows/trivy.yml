@@ -39,11 +39,13 @@ jobs:
       - name: Bake the image
         uses: docker/bake-action@v6
         with:
-          targets: ${{ matrix.target }}
+          targets: ${{ matrix.target }},${{ matrix.target }}-fips
           load: true
           set: |
             ${{ matrix.target }}.tags=${{ env.IMAGE_TAG }}
             ${{ matrix.target }}.platform=${{ matrix.platform }}
+            ${{ matrix.target }}-fips.tags=${{ env.IMAGE_TAG }}-fips
+            ${{ matrix.target }}-fips.platform=${{ matrix.platform }}
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@0.27.0
@@ -56,8 +58,25 @@ jobs:
         env:
           TRIVY_DB_REPOSITORY: ghcr.io/aquasecurity/trivy-db,public.ecr.aws/aquasecurity/trivy-db
 
+      - name: Run Trivy vulnerability scanner FIPS Images
+        uses: aquasecurity/trivy-action@0.27.0
+        with:
+          image-ref: ${{ env.IMAGE_TAG }}-fips
+          format: "sarif"
+          output: "trivy-results-fips.sarif"
+          severity: "CRITICAL,HIGH"
+          timeout: "10m"
+        env:
+          TRIVY_DB_REPOSITORY: ghcr.io/aquasecurity/trivy-db,public.ecr.aws/aquasecurity/trivy-db
+
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: "trivy-results.sarif"
+          category: "${{ matrix.target }}-${{ matrix.platform }}"
 
+      - name: Upload Trivy scan results to GitHub Security tab FIPS Images
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: "trivy-results-fips.sarif"
+          category: "${{ matrix.target }}-${{ matrix.platform }}-fips"
