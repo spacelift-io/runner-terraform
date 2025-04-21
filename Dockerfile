@@ -56,12 +56,12 @@ USER spacelift
 
 FROM base AS azure-build
 
-RUN apk add --no-cache py3-pip gcc musl-dev python3-dev libffi-dev openssl-dev cargo make
-
-RUN python3 -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
-RUN pip install --no-cache-dir azure-cli
+RUN apk add --virtual=build --no-cache py3-pip gcc musl-dev python3-dev libffi-dev openssl-dev cargo make && \
+    python3 -m venv /opt/venv && \
+    pip install --no-cache-dir azure-cli && \
+    apk del --purge build
 
 FROM base AS azure
 
