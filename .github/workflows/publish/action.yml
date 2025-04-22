@@ -57,6 +57,10 @@ runs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+      
+      - name: Clean up space
+        shell: bash
+        run: docker system prune -af 
 
       - name: Build and push the image
         uses: docker/bake-action@v6
