@@ -9,7 +9,7 @@ ARG BUN_RUNTIME_TRANSPILER_CACHE_PATH=0
 ARG BUN_INSTALL_BIN=/usr/local/bin    
 
 # hadolint ignore=DL3006
-FROM ${BASE_IMAGE} AS common 
+FROM ${BASE_IMAGE} AS common
 
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 
@@ -67,21 +67,12 @@ RUN REGULA_LATEST_VERSION=$(curl -s https://api.github.com/repos/fugue/regula/re
 
 FROM oven/bun:${BUN_VERSION}-alpine AS bun
 
-# Disable the runtime transpiler cache by default inside Docker containers.
-# On ephemeral containers, the cache is not useful
-ARG BUN_RUNTIME_TRANSPILER_CACHE_PATH=0
-ENV BUN_RUNTIME_TRANSPILER_CACHE_PATH=${BUN_RUNTIME_TRANSPILER_CACHE_PATH}
-
-# Ensure `bun install -g` works
-ARG BUN_INSTALL_BIN=/usr/local/bin
-ENV BUN_INSTALL_BIN=${BUN_INSTALL_BIN}
-
 FROM node:${NODE_VERSION}-alpine AS node
 
 # hadolint ignore=DL3007
 FROM ghcr.io/spacelift-io/aws-cli-alpine:latest AS aws-cli
 
-FROM hashicorp/terraform:${TERRAFORM_VERSION} AS terraform-latest
+FROM hashicorp/terraform:${TERRAFORM_VERSION} AS terraform
 
 FROM base
 
@@ -95,12 +86,21 @@ COPY --from=node /usr/local/bin/npm /usr/local/bin/npm
 COPY --from=node /usr/local/lib/node_modules /usr/local/lib/node_modules
 
 # Copy the latest terraform version into the base layer
-COPY --from=terraform-latest /bin/terraform /usr/local/bin/
+COPY --from=terraform /bin/terraform /usr/local/bin/
 
 # Copy Bun binary
 COPY --from=bun /usr/local/bin/bun /usr/local/bin/
 
 RUN ln -s /usr/local/bin/bun /usr/local/bin/bunx
+
+# Disable the runtime transpiler cache by default inside Docker containers.
+# On ephemeral containers, the cache is not useful
+ARG BUN_RUNTIME_TRANSPILER_CACHE_PATH=0
+ENV BUN_RUNTIME_TRANSPILER_CACHE_PATH=${BUN_RUNTIME_TRANSPILER_CACHE_PATH}
+
+# Ensure `bun install -g` works
+ARG BUN_INSTALL_BIN=/usr/local/bin
+ENV BUN_INSTALL_BIN=${BUN_INSTALL_BIN}
 
 # Check versions
 RUN echo "Software installed:"; \
