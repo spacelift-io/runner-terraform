@@ -98,6 +98,8 @@ COPY --from=bun /usr/local/bin/bun /usr/local/bin/
 
 RUN ln -s /usr/local/bin/bun /usr/local/bin/bunx
 
+SHELL ["/bin/ash", "-o", "pipefail", "-c"]
+
 # Check versions
 RUN echo "Software installed:"; \
     aws --version; \
