@@ -2,7 +2,6 @@ ARG BASE_IMAGE=alpine:3.21
 ARG NODE_VERSION=20.19.1
 ARG TERRAFORM_VERSION=1.11.4
 ARG BUN_VERSION=1.2.11 
-## bun version
 
 ARG BUN_RUNTIME_TRANSPILER_CACHE_PATH=0    
 # Ensure `bun install -g` works    
@@ -39,16 +38,10 @@ RUN apk -U upgrade && apk add --no-cache \
     openssh-keygen \
     tzdata \
     bash \
-    npm \
     yarn \
     python3
 
 RUN [ -e /usr/bin/python ] || ln -s python3 /usr/bin/python
-
-# Install latest NPM version, cdktf and prettier
-# Note: Remove later or install with bun (also rm npm & yarn)
-RUN npm install -g npm@latest && \
-    yarn global add cdktf-cli@latest prettier@latest
 
 # Download infracost
 ADD "https://github.com/infracost/infracost/releases/latest/download/infracost-linux-${TARGETARCH}.tar.gz" /tmp/infracost.tar.gz
@@ -85,22 +78,25 @@ COPY --from=node /usr/local/bin/node /usr/local/bin/node
 COPY --from=node /usr/local/bin/npm /usr/local/bin/npm
 COPY --from=node /usr/local/lib/node_modules /usr/local/lib/node_modules
 
+RUN ln -sf /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm 
+
+RUN npm install -g npm@latest && \
+    yarn global add cdktf-cli@latest prettier@latest
+    
 # Copy the latest terraform version into the base layer
 COPY --from=terraform /bin/terraform /usr/local/bin/
+
+# Disable the runtime transpiler cache by default inside Docker containers.
+# On ephemeral containers, the cache is not useful
+ENV BUN_RUNTIME_TRANSPILER_CACHE_PATH=0
+
+# Ensure `bun install -g` works
+ENV BUN_INSTALL_BIN=/usr/local/bin
 
 # Copy Bun binary
 COPY --from=bun /usr/local/bin/bun /usr/local/bin/
 
 RUN ln -s /usr/local/bin/bun /usr/local/bin/bunx
-
-# Disable the runtime transpiler cache by default inside Docker containers.
-# On ephemeral containers, the cache is not useful
-ARG BUN_RUNTIME_TRANSPILER_CACHE_PATH=0
-ENV BUN_RUNTIME_TRANSPILER_CACHE_PATH=${BUN_RUNTIME_TRANSPILER_CACHE_PATH}
-
-# Ensure `bun install -g` works
-ARG BUN_INSTALL_BIN=/usr/local/bin
-ENV BUN_INSTALL_BIN=${BUN_INSTALL_BIN}
 
 # Check versions
 RUN echo "Software installed:"; \
@@ -110,7 +106,6 @@ RUN echo "Software installed:"; \
     echo "Prettier v$(prettier --version)"; \
     echo "Regula $(regula version)"; \
     echo "Bun v$(bun --version)"; \
-    terraform --version; \
-    node -v;
+    echo "Terraform v$(terraform version -json | jq -r '.terraform_version')"
 
 USER spacelift
