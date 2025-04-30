@@ -3,10 +3,6 @@ ARG NODE_VERSION=20.19.1
 ARG TERRAFORM_VERSION=1.11.4
 ARG BUN_VERSION=1.2.11 
 
-ARG BUN_RUNTIME_TRANSPILER_CACHE_PATH=0    
-# Ensure `bun install -g` works    
-ARG BUN_INSTALL_BIN=/usr/local/bin    
-
 # hadolint ignore=DL3006
 FROM ${BASE_IMAGE} AS common
 
