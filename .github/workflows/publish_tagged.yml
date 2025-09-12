@@ -25,6 +25,7 @@ jobs:
       - name: Checkout repository code
         uses: actions/checkout@main
         with:
+          ref: ${{ steps.latest-tag.outputs.tag }}
           fetch-depth: 0
   
       - name: Build and push latest image (w/ aws cli)
