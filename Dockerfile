@@ -29,7 +29,7 @@ RUN tar -xzf /tmp/infracost.tar.gz -C /bin && \
     rm /tmp/infracost.tar.gz
 
 # Download Terragrunt.
-ADD "https://github.com/gruntwork-io/terragrunt/releases/latest/download/terragrunt_linux_${TARGETARCH}" /bin/terragrunt
+ADD "https://github.com/gruntwork-io/terragrunt/releases/download/v0.93.3/terragrunt_linux_${TARGETARCH}" /bin/terragrunt
 RUN chmod 755 /bin/terragrunt
 
 RUN echo "hosts: files dns" > /etc/nsswitch.conf \
