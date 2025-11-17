@@ -6,13 +6,13 @@ on:
       - v*
 
 jobs:
-  deployment:
-    name: Build and publish the newly tagged image
+  get-tag:
+    name: Get latest tag
     runs-on: ubuntu-latest
     permissions:
-      id-token: write
-      contents: write
-      packages: write
+      contents: read
+    outputs:
+      latest_tag: ${{ steps.latest-tag.outputs.tag }}
 
     steps:
       - name: Get latest tag
@@ -22,30 +22,56 @@ jobs:
           repository: ${{ github.repository }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
+  build-aws:
+    name: Build and push latest image (w/ aws cli)
+    runs-on: ubuntu-latest
+    needs: get-tag
+    permissions:
+      id-token: write
+      contents: write
+      packages: write
+
+    steps:
       - name: Checkout repository code
         uses: actions/checkout@main
         with:
-          ref: ${{ steps.latest-tag.outputs.tag }}
+          ref: ${{ needs.get-tag.outputs.latest_tag }}
           fetch-depth: 0
-  
+
       - name: Build and push latest image (w/ aws cli)
         uses: ./.github/workflows/publish
         with:
           bake_target: aws,aws-fips
           aws_role_to_assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          git_tag: ${{ steps.latest-tag.outputs.tag }}
+          git_tag: ${{ needs.get-tag.outputs.latest_tag }}
           publish_release: true
-          release_title: ${{ steps.latest-tag.outputs.tag }}
+          release_title: ${{ needs.get-tag.outputs.latest_tag }}
           bake_set: |
             aws.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:latest
-            aws.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:${{ steps.latest-tag.outputs.tag }}
+            aws.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:${{ needs.get-tag.outputs.latest_tag }}
             aws.tags=ghcr.io/spacelift-io/runner-terraform:latest
-            aws.tags=ghcr.io/spacelift-io/runner-terraform:${{ steps.latest-tag.outputs.tag }}
+            aws.tags=ghcr.io/spacelift-io/runner-terraform:${{ needs.get-tag.outputs.latest_tag }}
             aws-fips.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:latest-fips
-            aws-fips.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:${{ steps.latest-tag.outputs.tag }}-fips
+            aws-fips.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:${{ needs.get-tag.outputs.latest_tag }}-fips
             aws-fips.tags=ghcr.io/spacelift-io/runner-terraform:latest-fips
-            aws-fips.tags=ghcr.io/spacelift-io/runner-terraform:${{ steps.latest-tag.outputs.tag }}-fips
+            aws-fips.tags=ghcr.io/spacelift-io/runner-terraform:${{ needs.get-tag.outputs.latest_tag }}-fips
+
+  build-gcp:
+    name: Build and push latest image (w/ gcloud cli)
+    runs-on: ubuntu-latest
+    needs: get-tag
+    permissions:
+      id-token: write
+      contents: write
+      packages: write
+
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@main
+        with:
+          ref: ${{ needs.get-tag.outputs.latest_tag }}
+          fetch-depth: 0
 
       - name: Build and push latest image (w/ gcloud cli)
         uses: ./.github/workflows/publish
@@ -53,17 +79,33 @@ jobs:
           bake_target: gcp,gcp-fips
           aws_role_to_assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          git_tag: ${{ steps.latest-tag.outputs.tag }}
+          git_tag: ${{ needs.get-tag.outputs.latest_tag }}
           publish_release: false
           bake_set: |
             gcp.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:gcp-latest
-            gcp.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:gcp-${{ steps.latest-tag.outputs.tag }}
+            gcp.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:gcp-${{ needs.get-tag.outputs.latest_tag }}
             gcp.tags=ghcr.io/spacelift-io/runner-terraform:gcp-latest
-            gcp.tags=ghcr.io/spacelift-io/runner-terraform:gcp-${{ steps.latest-tag.outputs.tag }}
+            gcp.tags=ghcr.io/spacelift-io/runner-terraform:gcp-${{ needs.get-tag.outputs.latest_tag }}
             gcp-fips.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:gcp-latest-fips
-            gcp-fips.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:gcp-${{ steps.latest-tag.outputs.tag }}-fips
+            gcp-fips.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:gcp-${{ needs.get-tag.outputs.latest_tag }}-fips
             gcp-fips.tags=ghcr.io/spacelift-io/runner-terraform:gcp-latest-fips
-            gcp-fips.tags=ghcr.io/spacelift-io/runner-terraform:gcp-${{ steps.latest-tag.outputs.tag }}-fips
+            gcp-fips.tags=ghcr.io/spacelift-io/runner-terraform:gcp-${{ needs.get-tag.outputs.latest_tag }}-fips
+
+  build-azure:
+    name: Build and push latest image (w/ az cli)
+    runs-on: ubuntu-latest
+    needs: get-tag
+    permissions:
+      id-token: write
+      contents: write
+      packages: write
+
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@main
+        with:
+          ref: ${{ needs.get-tag.outputs.latest_tag }}
+          fetch-depth: 0
 
       - name: Build and push latest image (w/ az cli)
         uses: ./.github/workflows/publish
@@ -71,14 +113,14 @@ jobs:
           bake_target: azure,azure-fips
           aws_role_to_assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          git_tag: ${{ steps.latest-tag.outputs.tag }}
+          git_tag: ${{ needs.get-tag.outputs.latest_tag }}
           publish_release: false
           bake_set: |
             azure.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:azure-latest
-            azure.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:azure-${{ steps.latest-tag.outputs.tag }}
+            azure.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:azure-${{ needs.get-tag.outputs.latest_tag }}
             azure.tags=ghcr.io/spacelift-io/runner-terraform:azure-latest
-            azure.tags=ghcr.io/spacelift-io/runner-terraform:azure-${{ steps.latest-tag.outputs.tag }}
+            azure.tags=ghcr.io/spacelift-io/runner-terraform:azure-${{ needs.get-tag.outputs.latest_tag }}
             azure-fips.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:azure-latest-fips
-            azure-fips.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:azure-${{ steps.latest-tag.outputs.tag }}-fips
+            azure-fips.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:azure-${{ needs.get-tag.outputs.latest_tag }}-fips
             azure-fips.tags=ghcr.io/spacelift-io/runner-terraform:azure-latest-fips
-            azure-fips.tags=ghcr.io/spacelift-io/runner-terraform:azure-${{ steps.latest-tag.outputs.tag }}-fips
+            azure-fips.tags=ghcr.io/spacelift-io/runner-terraform:azure-${{ needs.get-tag.outputs.latest_tag }}-fips
