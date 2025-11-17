@@ -6,8 +6,8 @@ on:
       - main
 
 jobs:
-  deployment:
-    name: Build and publish future tag
+  build-aws:
+    name: Build and push future image (w/ aws cli)
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -33,6 +33,20 @@ jobs:
             aws-fips.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:future-fips
             aws-fips.tags=ghcr.io/spacelift-io/runner-terraform:future-fips
 
+  build-gcp:
+    name: Build and push future image (w/ gcloud cli)
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+      packages: write
+
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@main
+        with:
+          fetch-depth: 0
+
       - name: Build and push future image (w/ gcloud cli)
         uses: ./.github/workflows/publish
         with:
@@ -45,6 +59,20 @@ jobs:
             gcp.tags=ghcr.io/spacelift-io/runner-terraform:gcp-future
             gcp-fips.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:gcp-future-fips
             gcp-fips.tags=ghcr.io/spacelift-io/runner-terraform:gcp-future-fips
+
+  build-azure:
+    name: Build and push future image (w/ az cli)
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+      packages: write
+
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@main
+        with:
+          fetch-depth: 0
 
       - name: Build and push future image (w/ az cli)
         uses: ./.github/workflows/publish
