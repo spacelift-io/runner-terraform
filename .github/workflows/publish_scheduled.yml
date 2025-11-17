@@ -57,6 +57,12 @@ jobs:
       packages: write
 
     steps:
+      - name: Checkout repository code
+        uses: actions/checkout@main
+        with:
+          ref: ${{ needs.create-tag.outputs.latest_tag }}
+          fetch-depth: 0
+
       - name: Build and push weekly image (w/ aws cli)
         uses: ./.github/workflows/publish
         with:
@@ -123,6 +129,12 @@ jobs:
       packages: write
 
     steps:
+      - name: Checkout repository code
+        uses: actions/checkout@main
+        with:
+          ref: ${{ needs.create-tag.outputs.latest_tag }}
+          fetch-depth: 0
+
       - name: Build and push weekly image (w/ gcloud cli)
         uses: ./.github/workflows/publish
         with:
@@ -151,6 +163,12 @@ jobs:
       packages: write
 
     steps:
+      - name: Checkout repository code
+        uses: actions/checkout@main
+        with:
+          ref: ${{ needs.create-tag.outputs.latest_tag }}
+          fetch-depth: 0
+
       - name: Build and push weekly image (w/ az cli)
         uses: ./.github/workflows/publish
         with:
