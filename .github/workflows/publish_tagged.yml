@@ -44,9 +44,6 @@ jobs:
           bake_target: aws,aws-fips
           aws_role_to_assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          git_tag: ${{ needs.get-tag.outputs.latest_tag }}
-          publish_release: true
-          release_title: ${{ needs.get-tag.outputs.latest_tag }}
           bake_set: |
             aws.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:latest
             aws.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:${{ needs.get-tag.outputs.latest_tag }}
@@ -79,8 +76,6 @@ jobs:
           bake_target: gcp,gcp-fips
           aws_role_to_assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          git_tag: ${{ needs.get-tag.outputs.latest_tag }}
-          publish_release: false
           bake_set: |
             gcp.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:gcp-latest
             gcp.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:gcp-${{ needs.get-tag.outputs.latest_tag }}
@@ -113,8 +108,6 @@ jobs:
           bake_target: azure,azure-fips
           aws_role_to_assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          git_tag: ${{ needs.get-tag.outputs.latest_tag }}
-          publish_release: false
           bake_set: |
             azure.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:azure-latest
             azure.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:azure-${{ needs.get-tag.outputs.latest_tag }}
@@ -124,3 +117,19 @@ jobs:
             azure-fips.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:azure-${{ needs.get-tag.outputs.latest_tag }}-fips
             azure-fips.tags=ghcr.io/spacelift-io/runner-terraform:azure-latest-fips
             azure-fips.tags=ghcr.io/spacelift-io/runner-terraform:azure-${{ needs.get-tag.outputs.latest_tag }}-fips
+
+  create-release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: [get-tag, build-aws, build-gcp, build-azure]
+    permissions:
+      contents: write
+
+    steps:
+      - name: Create release
+        uses: ncipollo/release-action@v1
+        with:
+          name: ${{ needs.get-tag.outputs.latest_tag }}
+          tag: ${{ needs.get-tag.outputs.latest_tag }}
+          generateReleaseNotes: true
+          allowUpdates: true
