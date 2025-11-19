@@ -11,22 +11,9 @@ inputs:
   github_token:
     description: The GitHub token. Used to authenticate with GitHub registry.
     required: true
-  git_tag:
-    description: Git tag to use for the GitHub Release
-    required: false
   bake_set:
     description: The `set` argument of the bake action
     required: true
-  publish_release:
-    description: Whether to publish a GitHub Release
-    required: true
-    default: false
-  release_title:
-    description: The title of the GitHub Release.
-    required: false
-  release_body:
-    description: The body of the GitHub Release. If not provided, the body will be auto-generated.
-    required: false
 
 runs:
   using: composite
@@ -68,13 +55,3 @@ runs:
           push: true
           targets: ${{ inputs.bake_target }}
           set: ${{ inputs.bake_set }}
-
-      - name: Create release
-        uses: ncipollo/release-action@v1
-        if: inputs.publish_release == 'true'
-        with:
-          name: ${{ inputs.release_title }}
-          tag: ${{ inputs.git_tag }}
-          body: ${{ inputs.release_body }}
-          generateReleaseNotes: true
-          allowUpdates: true

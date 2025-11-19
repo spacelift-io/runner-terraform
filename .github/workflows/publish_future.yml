@@ -26,7 +26,6 @@ jobs:
           bake_target: aws,aws-fips
           aws_role_to_assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_release: false
           bake_set: |
             aws.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:future
             aws.tags=ghcr.io/spacelift-io/runner-terraform:future
@@ -53,7 +52,6 @@ jobs:
           bake_target: gcp,gcp-fips
           aws_role_to_assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_release: false
           bake_set: |
             gcp.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:gcp-future
             gcp.tags=ghcr.io/spacelift-io/runner-terraform:gcp-future
@@ -80,7 +78,6 @@ jobs:
           bake_target: azure,azure-fips
           aws_role_to_assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_release: false
           bake_set: |
             azure.tags=${{ secrets.PUBLIC_RUNNER_TERRAFORM_ECR_REPOSITORY_URL }}:azure-future
             azure.tags=ghcr.io/spacelift-io/runner-terraform:azure-future
