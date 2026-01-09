@@ -17,6 +17,17 @@ jobs:
       today_formatted: ${{ steps.date.outputs.TODAY_FORMATTED }}
 
     steps:
+      - name: Install datadog cli
+        shell: bash
+        run: npm install -g @datadog/datadog-ci
+
+      - name: Put normalized job name attribute in job metric
+        shell: bash
+        env:
+          DATADOG_SITE: datadoghq.eu
+          DATADOG_API_KEY: ${{ secrets.DATADOG_API_KEY }}
+        run: datadog-ci tag --level job --tags ci.job.group:terraform-runner --tags env:prod
+
       - name: Get latest tag
         uses: oprypin/find-latest-tag@v1
         id: latest-tag
