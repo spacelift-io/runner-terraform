@@ -26,7 +26,7 @@ jobs:
         env:
           DATADOG_SITE: datadoghq.eu
           DATADOG_API_KEY: ${{ secrets.DATADOG_API_KEY }}
-        run: datadog-ci tag --level job --tags ci.job.group:terraform-runner --tags env:prod
+        run: datadog-ci tag --level job --tags ci.job.group:runner-terraform --tags env:prod
 
       - name: Get latest tag
         uses: oprypin/find-latest-tag@v1
