@@ -19,7 +19,7 @@ runs:
   using: composite
   steps:
       - name: Configure AWS credentials for public ECR
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v5
         with:
           aws-region: us-east-1
           role-to-assume: ${{ inputs.aws_role_to_assume }}
