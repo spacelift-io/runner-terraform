@@ -70,13 +70,13 @@ jobs:
           timeout: "10m"
 
       - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: "trivy-results.sarif"
           category: "${{ matrix.target }}-${{ matrix.platform }}"
 
       - name: Upload Trivy scan results to GitHub Security tab FIPS Images
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: "trivy-results-fips.sarif"
           category: "${{ matrix.target }}-${{ matrix.platform }}-fips"
