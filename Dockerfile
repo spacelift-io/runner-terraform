@@ -30,6 +30,9 @@ RUN tar -xzf /tmp/infracost.tar.gz -C /bin && \
 ADD "https://github.com/gruntwork-io/terragrunt/releases/download/v0.93.3/terragrunt_linux_${TARGETARCH}" /bin/terragrunt
 RUN chmod 755 /bin/terragrunt
 
+# Install tenv
+RUN apk add --no-cache tenv --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing/
+
 RUN echo "hosts: files dns" > /etc/nsswitch.conf \
     && adduser --disabled-password --uid=1983 spacelift
 
@@ -42,7 +45,8 @@ RUN aws --version && \
     terragrunt --version && \
     python --version && \
     infracost --version && \
-    spaceforge --version
+    spaceforge --version && \
+    tenv --version
 
 USER spacelift
 
@@ -54,7 +58,8 @@ RUN gcloud --version && \
     terragrunt --version && \
     python --version && \
     infracost --version && \
-    spaceforge --version
+    spaceforge --version && \
+    tenv --version
 
 USER spacelift
 
@@ -78,6 +83,7 @@ RUN apk add --no-cache py3-pip && \
     terragrunt --version && \
     python --version && \
     infracost --version && \
-    spaceforge --version
+    spaceforge --version && \
+    tenv --version
 
 USER spacelift
