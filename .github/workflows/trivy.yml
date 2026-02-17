@@ -52,7 +52,7 @@ jobs:
             ${{ matrix.target }}-fips.platform=${{ matrix.platform }}
 
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@0.33.1
+        uses: aquasecurity/trivy-action@0.34.0
         with:
           image-ref: ${{ env.IMAGE_TAG }}
           format: "sarif"
@@ -61,7 +61,7 @@ jobs:
           timeout: "10m"
 
       - name: Run Trivy vulnerability scanner FIPS Images
-        uses: aquasecurity/trivy-action@0.33.1
+        uses: aquasecurity/trivy-action@0.34.0
         with:
           image-ref: ${{ env.IMAGE_TAG }}-fips
           format: "sarif"
