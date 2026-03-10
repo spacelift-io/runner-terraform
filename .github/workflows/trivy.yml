@@ -33,15 +33,15 @@ jobs:
 
       - name: Set up QEMU
         if: matrix.platform == 'linux/arm64'
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
         with:
           platforms: linux/arm64
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
 
       - name: Bake the image
-        uses: docker/bake-action@v6
+        uses: docker/bake-action@v7
         with:
           targets: ${{ matrix.target }},${{ matrix.target }}-fips
           load: true
@@ -52,7 +52,7 @@ jobs:
             ${{ matrix.target }}-fips.platform=${{ matrix.platform }}
 
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@0.34.2
+        uses: aquasecurity/trivy-action@0.35.0
         with:
           image-ref: ${{ env.IMAGE_TAG }}
           format: "sarif"
@@ -61,7 +61,7 @@ jobs:
           timeout: "10m"
 
       - name: Run Trivy vulnerability scanner FIPS Images
-        uses: aquasecurity/trivy-action@0.34.2
+        uses: aquasecurity/trivy-action@0.35.0
         with:
           image-ref: ${{ env.IMAGE_TAG }}-fips
           format: "sarif"
