@@ -1,7 +1,7 @@
 target "aws" {
     target = "aws"
     platforms = ["linux/amd64", "linux/arm64"]
-    args = {"BASE_IMAGE": "alpine:3.23"}
+    args = {"BASE_IMAGE": "alpine:3.24"}
 }
 
 target "gcp" {
@@ -13,7 +13,7 @@ target "gcp" {
 target "azure" {
     target = "azure"
     platforms = ["linux/amd64", "linux/arm64"]
-    args = {"BASE_IMAGE": "alpine:3.23"}
+    args = {"BASE_IMAGE": "alpine:3.24"}
 }
 
 target "aws-fips" {
