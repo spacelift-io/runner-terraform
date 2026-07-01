@@ -16,7 +16,7 @@ RUN apk -U upgrade && apk add --no-cache \
     py3-pip \
     tzdata
 
-# Breaking system packages should be fine sice tofu does not use python
+# Breaking system packages should be fine since tofu does not use python
 RUN python3 -m pip install spaceforge --break-system-packages
 
 # Download infracost
