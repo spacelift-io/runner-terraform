@@ -21,7 +21,7 @@ This is because `gcloud` and `az` are very large packages and we want to keep th
 ### FIPS
 
 All the tags have a `-fips` variant that has been installed with the latest FIPS compliant OpenSSL (3.1.2 at the time of writing).
-You are still responsible to run these images on a FIPS hardened host ensuring youre only communicating with FIPS enabled endpoints.
+You are still responsible to run these images on a FIPS hardened host ensuring you're only communicating with FIPS enabled endpoints.
 
 - `spacelift-io/runner-terraform:latest-fips` -> with `aws` CLI & FIPS OpenSSL
 - `spacelift-io/runner-terraform:gcp-latest-fips` -> with `gcloud` CLI & FIPS OpenSSL
