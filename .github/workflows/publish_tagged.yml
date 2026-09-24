@@ -133,3 +133,30 @@ jobs:
           tag: ${{ needs.get-tag.outputs.latest_tag }}
           generateReleaseNotes: true
           allowUpdates: true
+
+  notify-failure:
+    name: Notify workflow failure
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+    needs: [ get-tag, build-aws, build-gcp, build-azure, create-release ]
+    if: ${{ always() && contains(needs.*.result, 'failure') }}
+    steps:
+      - name: Collect failed jobs
+        id: failed-jobs
+        env:
+          NEEDS: ${{ toJSON(needs) }}
+        run: |
+          failed_jobs=$(echo "$NEEDS" | jq -r '[to_entries[] | select(.value.result == "failure") | .key] | join(", ")')
+          echo "message=GitHub workflow is failing on ${{ github.repository }} - failed jobs: ${failed_jobs}" >> $GITHUB_OUTPUT
+
+      - name: Notify workflow failure
+        uses: spacelift-io/public-shared-actions/actions/notify-workflow-failure@main
+        with:
+          github_token: ${{ github.token }}
+          slack_bot_token: ${{ secrets.SLACK_BOT_TOKEN }}
+          slack_channel_id: ${{ vars.SLACK_CHANNEL_ID }}
+          slack_usergroup_name: iac-backend
+          header_message: ${{ steps.failed-jobs.outputs.message }}
+          workflow_name: ${{ github.workflow }}
