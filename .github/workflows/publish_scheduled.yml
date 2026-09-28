@@ -35,11 +35,22 @@ jobs:
           repository: ${{ github.repository }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      # Pushing a tag whose workflow files differ from the default branch needs the workflows permission, which GITHUB_TOKEN cannot have.
+      - name: Generate tag push token
+        uses: actions/create-github-app-token@v3
+        id: app-token
+        with:
+          app-id: ${{ secrets.RUNNER_TERRAFORM_APP_ID }}
+          private-key: ${{ secrets.RUNNER_TERRAFORM_APP_PRIVATE_KEY }}
+          permission-contents: write
+          permission-workflows: write
+
       - name: Checkout repository code
         uses: actions/checkout@main
         with:
           ref: ${{ steps.latest-tag.outputs.tag }}
           fetch-depth: 0
+          token: ${{ steps.app-token.outputs.token }}
 
       - name: Set current date as env variable
         id: date
